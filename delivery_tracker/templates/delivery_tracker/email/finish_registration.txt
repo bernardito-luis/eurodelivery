@@ -1,0 +1,1 @@
+Finish registration by following this link: http://{{ registration_link }}

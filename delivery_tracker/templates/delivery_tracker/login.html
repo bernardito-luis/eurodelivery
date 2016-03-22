@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Euro Delivery</title>
+
+    <script src="{% static 'js/jquery-1.12.2.min.js' %}" type="text/javascript" lang="javascript"></script>
+</head>
+<body>
+    <h1>Login</h1>
+
+    <form id="id_login_form" action="/tracker/login/" method="post">
+        {% csrf_token %}
+
+        Username: <input type="text" name="username" value="" size="50" /><br/>
+        Password: <input type="password" name="password" value="" size="50" /><br/>
+
+        <input type="submit" name="submit" value="Submit" />
+    </form>
+    <a href="/tracker/register">Register</a>
+    <a href="/tracker/forgot_password">Forgot password</a>
+</body>
+</html>

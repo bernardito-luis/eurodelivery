@@ -1,0 +1,6 @@
+__pycache__
+.idea
+db.sqlite3
+local_settings.py
+euro_venv
+
