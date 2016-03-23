@@ -2,7 +2,7 @@ import datetime
 from uuid import uuid4
 
 from django.conf import settings
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
@@ -13,6 +13,10 @@ from django.template.loader import render_to_string
 from delivery_tracker.forms import UserForm, ForgotPasswordForm
 from delivery_tracker.models import UserRegistrationLink
 from delivery_tracker.utils import generate_password
+
+
+def home_page(request):
+    return redirect('cabinet')
 
 
 def register(request):
@@ -126,6 +130,7 @@ def forgot_password(request):
 
 
 def user_login(request):
+    context = dict()
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -137,11 +142,17 @@ def user_login(request):
                 login(request, user)
                 return redirect('cabinet')
             else:
-                return HttpResponse('Your account has been expired')
+                context['status_message'] = 'Your account has been expired'
         else:
-            return HttpResponse('Invalid username or password')
+            context['status_message'] = 'Invalid username or password'
 
-    return render(request, 'delivery_tracker/login.html')
+    return render(request, 'delivery_tracker/login.html', context)
+
+
+@login_required
+def user_logout(request):
+    logout(request)
+    return redirect('home_page')
 
 
 @login_required

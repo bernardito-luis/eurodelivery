@@ -10,10 +10,11 @@
 <body>
     <h1>Login</h1>
 
+    <b>{{ status_message }}</b>
     <form id="id_login_form" action="/tracker/login/" method="post">
         {% csrf_token %}
 
-        Username: <input type="text" name="username" value="" size="50" /><br/>
+        Email: <input type="text" name="username" value="" size="50" /><br/>
         Password: <input type="password" name="password" value="" size="50" /><br/>
 
         <input type="submit" name="submit" value="Submit" />

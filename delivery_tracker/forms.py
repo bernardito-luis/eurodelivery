@@ -10,7 +10,7 @@ class UserForm(forms.ModelForm):
         fields = ['username', 'password']
 
     # NB: you'll need to set auth_user username to VARCHAR(75)
-    username = forms.EmailField(max_length=75, help_text="Enter your email")
+    username = forms.EmailField(label='Email', max_length=75)
     password = forms.CharField(widget=forms.PasswordInput())
 
     buf_username = None
