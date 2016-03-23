@@ -1,3 +1,5 @@
+import re
+
 from django import forms
 from django.contrib import admin
 from django.contrib.auth.models import User
@@ -22,12 +24,23 @@ class UserForm(forms.ModelForm):
     def clean_username(self):
         username = self.cleaned_data['username']
         self.buf_username = username
-        if not username:
-            raise forms.ValidationError("Empty username is not allowed")
         if User.objects.filter(username=username).exists():
             raise forms.ValidationError("Such user already exists")
 
         return username
+
+    def clean_password(self):
+        password = self.cleaned_data['password']
+        if (len(password) <= 6 or
+                not (re.search('\d', password) and
+                     re.search('[A-Za-z]', password))
+            ):
+            raise forms.ValidationError(
+                "Password is weak. It should contain letters and numbers and "
+                "be longer than 6 symbols"
+            )
+
+        return password
 
     def full_clean(self):
         super(UserForm, self).full_clean()
