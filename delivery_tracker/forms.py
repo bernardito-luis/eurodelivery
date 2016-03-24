@@ -17,10 +17,6 @@ class UserForm(forms.ModelForm):
 
     buf_username = None
 
-    def clean_email(self):
-        email = self.cleaned_data['username']
-        return email
-
     def clean_username(self):
         username = self.cleaned_data['username']
         self.buf_username = username
@@ -31,7 +27,7 @@ class UserForm(forms.ModelForm):
 
     def clean_password(self):
         password = self.cleaned_data['password']
-        if (len(password) <= 6 or
+        if (len(password) < 6 or
                 not (re.search('\d', password) and
                      re.search('[A-Za-z]', password))
             ):
@@ -55,9 +51,7 @@ class UserForm(forms.ModelForm):
 
 
 class ForgotPasswordForm(forms.Form):
-    registered_email = forms.EmailField(
-        max_length=75, help_text="Enter your registered email"
-    )
+    registered_email = forms.EmailField(max_length=75)
 
 
 # class UserAdmin(UserAdmin):

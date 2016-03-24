@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <script src="{% static 'js/jquery-1.12.2.min.js' %}" type="text/javascript" lang="javascript"></script>
+
+    {% block html_header_tag %}
+        {# ----- This block allows to add extra html head tags (styles, metas, etc) ----- #}
+    {% endblock %}
+
+    <title>{% block page_title %} Euro Delivery {% endblock %}</title>
+</head>
+<body>
+
+    {% block content %}
+    {% endblock %}
+
+    {% block script %}
+    {% endblock %}
+
+</body>
+</html>

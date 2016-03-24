@@ -1,25 +1,41 @@
-<!DOCTYPE html>
-{% load staticfiles %}
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title>Euro Delivery</title>
+{% extends 'delivery_tracker/base.html' %}
 
-    <script src="{% static 'js/jquery-1.12.2.min.js' %}" type="text/javascript" lang="javascript"></script>
-</head>
-<body>
-    <h1>Login</h1>
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h1>Login</h1>
 
-    <b>{{ status_message }}</b>
-    <form id="id_login_form" action="/tracker/login/" method="post">
-        {% csrf_token %}
+                <b>{{ status_message }}</b>
+                <form id="id_login_form" action="{% url 'login' %}" method="post" class="form-horizontal">
+                    {% csrf_token %}
 
-        Email: <input type="text" name="username" value="" size="50" /><br/>
-        Password: <input type="password" name="password" value="" size="50" /><br/>
+                    <div class="form-group">
+                        <label for="id_input_email" class="control-label col-sm-2">Email</label>
+                        <div class="col-sm-5">
+                            <input id="id_input_email" type="text" name="username" class="form-control" autofocus />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_input_password" class="control-label col-sm-2">Password</label>
+                        <div class="col-sm-5">
+                            <input id="id_input_password" type="password" name="password" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="submit" class="btn btn-default">Login</button>
+                        </div>
+                    </div>
+                </form>
+                <div class="col-sm-offset-2 col-sm-2">
+                    <a href="{% url 'register' %}"><b>Register</b></a>
+                </div>
+                <div class="col-sm-6">
+                    <a href="{% url 'forgot_password' %}"><b>Forgot password</b></a>
+                </div>
 
-        <input type="submit" name="submit" value="Submit" />
-    </form>
-    <a href="/tracker/register">Register</a>
-    <a href="/tracker/forgot_password">Forgot password</a>
-</body>
-</html>
+            </div>
+        </div>
+    </div>
+{% endblock %}
