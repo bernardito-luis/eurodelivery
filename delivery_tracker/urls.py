@@ -16,4 +16,6 @@ urlpatterns = [
         views.user_logout, name='logout'),
     url(r'^tracker/cabinet/$',
         views.cabinet, name='cabinet'),
+    url(r'^tracker/cabinet/personal_data/$',
+        views.personal_data, name='cabinet_personal_data'),
 ]

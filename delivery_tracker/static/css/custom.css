@@ -1,3 +1,64 @@
 .top-offset-20 {
     margin-top: 20px;
 }
+
+.left_img {
+    float: left;
+}
+
+.header_stripe {
+    margin-bottom: 10px;
+    background: #A0A09F;
+    height: 50px;
+    line-height: 50px;
+    white-space: nowrap;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    padding-left: 10px;
+}
+
+.header_stripe_money {
+    color: yellow;
+    text-align: right;
+}
+
+.news_header_stripe {
+    margin-top: 50px;
+    background: #A0A09F;
+    height: 50px;
+    line-height: 50px;
+    white-space: nowrap;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    padding-left: 10px;
+    text-align: center;
+}
+
+.cabinet_page_header {
+    text-align: center;
+    margin-top: 5px;
+    height: 50px;
+}
+
+.link_hover_disabled a:hover {
+    text-decoration: none;
+}
+
+.cabinet_page_button_lime {
+    background: #BADA55;
+    color: white;
+    text-align: center;
+    margin-top: 10px;
+    padding: 5px;
+    height: 50px;
+}
+.cabinet_page_button_gray {
+    background: #A0A09F;
+    color: white;
+    text-align: center;
+    margin-top: 10px;
+    padding: 5px;
+    height: 50px;
+}

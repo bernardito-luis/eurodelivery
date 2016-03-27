@@ -1,4 +1,5 @@
 {% extends 'delivery_tracker/base.html' %}
+{% load staticfiles %}
 
 {% block content %}
     <div class="container">
@@ -11,55 +12,64 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-8 top-offset-20">
                 <div style="background: #A0A09F; height: 50px; line-height: 50px; white-space: nowrap; font-size: 25px; color: white; padding-left: 10px;">
                     <span class="glyphicon glyphicon-heart" aria-hidden="true" style="color: white"></span> Main
 
                 </div>
-                <div class="col-md-3">
-                    <span class="glyphicon glyphicon-list-alt" aria-hidden="true" style="color: blue"></span><b>Orders and bills</b>
-                    <div style="background: #BADA55; color: white; text-align: center; margin-top: 5px;"><b>+ Create new <br>order<br></b></div>
-                    <div style="background: #A0A09F; color: white; text-align: center; margin-top: 5px;"><b>My orders</b></div>
-                    <div style="background: #A0A09F; color: white; text-align: center; margin-top: 5px;"><b>My bills for paying</b></div>
-                </div>
-                <div class="col-md-3">
-                    <span class="glyphicon glyphicon-list-alt" aria-hidden="true" style="color: blue"></span><b>Goods and parcels</b>
-                    <div style="background: #BADA55; color: white; text-align: center; margin-top: 5px;"><b>+ Incoming parcel registration</b></div>
-                    <div style="background: #BADA55; color: white; text-align: center; margin-top: 5px;"><b>+ Create outgoing parcel</b></div>
-                    <div style="background: #A0A09F; color: white; text-align: center; margin-top: 5px;"><b>My parcels (shipping, storing)</b></div>
-                    <div style="background: #A0A09F; color: white; text-align: center; margin-top: 5px;"><b>My virtual address</b></div>
-                </div>
-                <div class="col-md-3">
-                    <span class="glyphicon glyphicon-list-alt" aria-hidden="true" style="color: blue"></span><b>Messages and help</b>
-                    <div style="background: #BADA55; color: white; text-align: center; margin-top: 5px;"><b>+ Create a new request</b></div>
-                    <div style="background: #A0A09F; color: white; text-align: center; margin-top: 5px;"><b>My appeals</b></div>
-                    <div style="background: #A0A09F; color: white; text-align: center; margin-top: 5px;"><b>Frequently asked questions</b></div>
-                    <div style="background: #A0A09F; color: white; text-align: center; margin-top: 5px;"><b>Prices and calculator</b></div>
-                    <div style="background: #A0A09F; color: white; text-align: center; margin-top: 5px;"><b>User agreement</b></div>
-                </div>
-                <div class="col-md-3">
-                    <span class="glyphicon glyphicon-list-alt" aria-hidden="true" style="color: blue"></span><b>Personal Data</b>
-                    <div style="background: #BADA55; color: white; text-align: center; margin-top: 5px;"><b>+ My bonuses</b></div>
-                    <div style="background: #A0A09F; color: white; text-align: center; margin-top: 5px;"><b>Preferences</b></div>
-                    <div style="background: #A0A09F; color: white; text-align: center; margin-top: 5px;"><b>Addresses</b></div>
-                    <div style="background: #A0A09F; color: white; text-align: center; margin-top: 5px;"><b>Account verification</b></div>
-                    <div style="background: #A0A09F; color: white; text-align: center; margin-top: 5px;"><b>Social networks</b></div>
+                <div class="row top-offset-20">
+                    <div class="col-md-3 col-sm-3 link_hover_disabled">
+                        <a href="{% url 'cabinet' %}"><div class="cabinet_page_header"><img src="{% static 'img/order.png' %}" alt="Orders and bills" class="left_img"/><b>Orders and bills</b></div></a>
+                        <a href="{% url 'cabinet' %}"><div class="cabinet_page_button_lime"><b>+ Create new <br>order<br></b></div></a>
+                        <a href="{% url 'cabinet' %}"><div class="cabinet_page_button_gray"><b>My orders</b></div></a>
+                        <a href="{% url 'cabinet' %}"><div class="cabinet_page_button_gray"><b>My bills for paying</b></div></a>
+                    </div>
+                    <div class="col-md-3 col-sm-3 link_hover_disabled">
+                        <a href="{% url 'cabinet' %}"><div class="cabinet_page_header"><img src="{% static 'img/box.png' %}" alt="Goods and parcels" class="left_img"/><b>Goods and parcels</b></div></a>
+                        <a href="{% url 'cabinet' %}"><div class="cabinet_page_button_lime"><b>+ Incoming parcel registration</b></div></a>
+                        <a href="{% url 'cabinet' %}"><div class="cabinet_page_button_lime"><b>+ Create outgoing parcel</b></div></a>
+                        <a href="{% url 'cabinet' %}"><div class="cabinet_page_button_gray"><b>My parcels (shipping, storing)</b></div></a>
+                        <a href="{% url 'cabinet' %}"><div class="cabinet_page_button_gray"><b>My virtual address</b></div></a>
+                    </div>
+                    <div class="col-md-3 col-sm-3 link_hover_disabled">
+                        <a href="{% url 'cabinet' %}"><div class="cabinet_page_header"><img src="{% static 'img/message.png' %}" alt="Messages and help" class="left_img"/><b>Messages and help</b></div></a>
+                        <a href="{% url 'cabinet' %}"><div class="cabinet_page_button_lime"><b>+ Create a new request</b></div></a>
+                        <a href="{% url 'cabinet' %}"><div class="cabinet_page_button_gray"><b>My appeals</b></div></a>
+                        <a href="{% url 'cabinet' %}"><div class="cabinet_page_button_gray"><b>Frequently asked questions</b></div></a>
+                        <a href="{% url 'cabinet' %}"><div class="cabinet_page_button_gray"><b>Prices and calculator</b></div></a>
+                        <a href="{% url 'cabinet' %}"><div class="cabinet_page_button_gray"><b>User agreement</b></div></a>
+                    </div>
+                    <div class="col-md-3 col-sm-3 link_hover_disabled">
+                        <a href="{% url 'cabinet_personal_data' %}"><div class="cabinet_page_header"><img src="{% static 'img/person.png' %}" alt="Personal Data" class="left_img"/><b>Personal Data</b></div></a>
+                        <a href="{% url 'cabinet' %}"><div class="cabinet_page_button_lime"><b>+ My bonuses</b></div></a>
+                        <a href="{% url 'cabinet' %}"><div class="cabinet_page_button_gray"><b>Preferences</b></div></a>
+                        <a href="{% url 'cabinet' %}"><div class="cabinet_page_button_gray"><b>Addresses</b></div></a>
+                        <a href="{% url 'cabinet' %}"><div class="cabinet_page_button_gray"><b>Account verification</b></div></a>
+                        <a href="{% url 'cabinet' %}"><div class="cabinet_page_button_gray"><b>Social networks</b></div></a>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-offset-1 col-md-3">
-                <div class="row">
-                    <div class="col-sm-8" style="background: #A0A09F; color: white; margin-top: 5px; text-align: left;"><b>Not yet payed bills</b></div><div class="col-sm-4" style="background: #A0A09F; color: white; margin-top: 5px; text-align:right">0 (0 euro)</div>
+            <div class="col-md-offset-1 col-md-3 top-offset-20">
+                <div class="row header_stripe">
+                    <div class="col-sm-8">Not yet payed bills</div><div class="col-sm-4 header_stripe_money">0 (0 euro)</div>
                 </div>
-                <div class="row">
-                <div style="background: #A0A09F; color: white; text-align: left; margin-top: 5px;"><b>Parcels stored</b></div>
-                <div style="background: #A0A09F; color: white; text-align: left; margin-top: 5px;"><b>Ready for shipping</b></div>
-                <div style="background: #A0A09F; color: white; text-align: left; margin-top: 5px;"><b>Shipping</b></div>
+                <div class="row header_stripe">
+                    <div class="col-sm-8">Parcels stored</div><div class="col-sm-4 header_stripe_money">0 (0 euro)</div>
                 </div>
-                <div style="background: #A0A09F; color: white; text-align: center; margin-top: 40px;"><b>News</b></div>
+                <div class="row header_stripe">
+                    <div class="col-sm-8">Ready for shipping</div><div class="col-sm-4 header_stripe_money">0 (0 euro)</div>
+                </div>
+                <div class="row header_stripe">
+                    <div class="col-sm-8">Shipping</div><div class="col-sm-4 header_stripe_money">0 (0 euro)</div>
+                </div>
+
+                <div class="row news_header_stripe">
+                    News
+                </div>
                 <ul>
-                    <li>I've heard them calling in the distance</li>
-                    <li>So I packed my things and run</li>
-                    <li>Far away from other trouble</li>
+                    <li>I've heard them calling in the distance So I packed my things and run</li>
+                    <li>Far away from other trouble I had caused with my two hands</li>
+                    <li>Hold your horses now (and sleep until the sun goes down) through the worlds we ran (deep into the mountain sound)</li>
                 </ul>
             </div>
         </div>

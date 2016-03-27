@@ -158,3 +158,7 @@ def user_logout(request):
 @login_required
 def cabinet(request):
     return render(request, 'delivery_tracker/cabinet.html')
+
+@login_required
+def personal_data(request):
+    return render(request, 'delivery_tracker/personal_data.html')
