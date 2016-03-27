@@ -1,0 +1,100 @@
+{% extends 'delivery_tracker/base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+    <div class="container">
+        <div class="row top-offset-20">
+            <div class="col-md-offset-8 col-md-3">
+                <b>Welcome{% if user.first_name %}, {{ user.first_name }}{% endif %}!</b>
+            </div>
+            <div class="col-md-1">
+                <b><a href="{% url 'logout' %}">Logout</a></b>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 top-offset-20">
+                <div class="header_stripe">
+                    <a href="{% url 'cabinet' %}"><span class="glyphicon glyphicon-heart" aria-hidden="true" style="color: white"></span> Main</a> - <a href="{% url 'cabinet_personal_data' %}">Personal data</a>
+                </div>
+            </div>
+        </div>
+        <div class="row top-offset-20">
+            <div class="col-md-12">
+                <form id="id_login_form" action="{% url 'login' %}" method="post" class="form-horizontal">
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        <label for="id_first_name" class="control-label col-sm-2">First name</label>
+                        <div class="col-sm-5">
+                            <input id="id_first_name" type="text" name="first_name" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_last_name" class="control-label col-sm-2">Last name</label>
+                        <div class="col-sm-5">
+                            <input id="id_last_name" type="text" name="last_name" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_email" class="control-label col-sm-2">Email</label>
+                        <div class="col-sm-5">
+                            <input id="id_email" type="text" name="email" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_password" class="control-label col-sm-2">Password</label>
+                        <div class="col-sm-5">
+                            <input id="id_password" type="password" name="last_name" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_phone" class="control-label col-sm-2">Phone</label>
+                        <div class="col-sm-5">
+                            <input id="id_phone" type="text" name="last_name" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_notifications" class="control-label col-sm-2">Send email notifications</label>
+                        <div class="col-sm-5">
+                            <input id="id_notifications" type="checkbox" name="last_name" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_verification_docs" class="control-label col-sm-2">Documents of the account verification</label>
+                        <div class="col-sm-5">
+                            <input id="id_verification_docs" type="text" name="last_name" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="submit" class="btn btn-default">Save changes</button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    Addresses
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2 col-md-offset-1">
+                    Country
+                </div>
+                <div class="col-md-2">
+                    Index
+                </div>
+                <div class="col-md-2">
+                    Address
+                </div>
+                <div class="col-md-2">
+                    Credentials of the recipient
+                </div>
+                <div class="col-md-2">
+                    Phone of the recipient
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
