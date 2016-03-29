@@ -10,7 +10,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render, redirect, HttpResponse
 from django.template.loader import render_to_string
 
-from delivery_tracker.forms import UserForm, ForgotPasswordForm
+from delivery_tracker.forms import UserForm, ForgotPasswordForm, UserInfoForm
 from delivery_tracker.models import UserRegistrationLink
 from delivery_tracker.utils import generate_password
 
@@ -159,6 +159,18 @@ def user_logout(request):
 def cabinet(request):
     return render(request, 'delivery_tracker/cabinet.html')
 
+
 @login_required
 def personal_data(request):
-    return render(request, 'delivery_tracker/personal_data.html')
+    if request.method == "POST":
+        form = UserInfoForm(data=request.POST)
+    else:
+        init_values = {
+            'first_name': request.user.first_name,
+            'last_name': request.user.last_name,
+            'email': request.user.username,
+            'password': '******',
+        }
+        form = UserInfoForm(initial=init_values)
+    context = {'form': form}
+    return render(request, 'delivery_tracker/personal_data.html', context)

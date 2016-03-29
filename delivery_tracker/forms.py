@@ -1,9 +1,7 @@
 import re
 
 from django import forms
-from django.contrib import admin
 from django.contrib.auth.models import User
-from django.contrib.auth.admin import UserAdmin
 
 
 class UserForm(forms.ModelForm):
@@ -54,12 +52,11 @@ class ForgotPasswordForm(forms.Form):
     registered_email = forms.EmailField(max_length=75)
 
 
-# class UserAdmin(UserAdmin):
-#     form = UserForm
-#     list_display = ('email', 'first_name', 'last_name', 'is_staff')
-#     list_filter = ('is_staff', )
-#     search_fields = ('email', )
-#
-# admin.site.unregister(User)
-# admin.site.register(User, UserAdmin)
+class UserInfoForm(forms.Form):
+    first_name = forms.CharField(max_length=30)
+    last_name = forms.CharField(max_length=30)
+    email = forms.EmailField(max_length=75)
 
+    # phone = forms.CharField(max_length=20)
+    # email_notifications = forms.BooleanField()
+    # documents = forms.CharField(max_length=255)
