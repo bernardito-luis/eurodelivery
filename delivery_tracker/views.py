@@ -2,6 +2,7 @@ import datetime
 from uuid import uuid4
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -162,8 +163,21 @@ def cabinet(request):
 
 @login_required
 def personal_data(request):
+    context = dict()
+    context['messages'] = messages.get_messages(request)
     if request.method == "POST":
         form = UserInfoForm(data=request.POST)
+        if form.is_valid():
+            request.user.first_name = form.data['first_name']
+            request.user.last_name = form.data['last_name']
+            request.user.email = form.data['email']
+            request.user.save()
+            messages.add_message(
+                request,
+                messages.INFO,
+                u'Изменения сохранены'
+            )
+            return redirect('cabinet_personal_data')
     else:
         init_values = {
             'first_name': request.user.first_name,
@@ -172,5 +186,5 @@ def personal_data(request):
             'password': '******',
         }
         form = UserInfoForm(initial=init_values)
-    context = {'form': form}
+    context = {'form': form, 'masked_password': '******'}
     return render(request, 'delivery_tracker/personal_data.html', context)

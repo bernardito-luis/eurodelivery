@@ -53,9 +53,9 @@ class ForgotPasswordForm(forms.Form):
 
 
 class UserInfoForm(forms.Form):
-    first_name = forms.CharField(max_length=30)
-    last_name = forms.CharField(max_length=30)
-    email = forms.EmailField(max_length=75)
+    first_name = forms.CharField(max_length=30, required=False)
+    last_name = forms.CharField(max_length=30, required=False)
+    email = forms.EmailField(max_length=75, required=False)
 
     # phone = forms.CharField(max_length=20)
     # email_notifications = forms.BooleanField()
