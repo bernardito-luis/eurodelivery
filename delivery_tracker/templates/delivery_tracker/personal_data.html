@@ -2,6 +2,7 @@
 {% load staticfiles %}
 
 {% block content %}
+    <div class="shadow_all"></div>
     <div class="container">
         <div class="row top-offset-20">
             <div class="col-md-offset-8 col-md-3">
@@ -81,7 +82,7 @@
                     </div>
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10">
-                            <button type="submit" class="btn btn-default">Save changes</button>
+                            <button type="submit" name="profile_changes" class="btn btn-default">Save changes</button>
                         </div>
                     </div>
                 </form>
@@ -112,24 +113,40 @@
         </div>
     </div>
 
-    <div id="dialog-form" title="Change password">
-        <p class="validateTips">All form fields are required.</p>
+    <div id="dialog_form">
+        <p class="validate_tips"></p>
 
-        <form>
-            <fieldset>
-                <label for="id_old_password">Password</label>
-                <input type="password" name="old_password" id="id_old_password" class="text ui-widget-content ui-corner-all">
-                <label for="id_new_password">New password</label>
-                <input type="password" name="new_password" id="id_new_password" class="text ui-widget-content ui-corner-all">
-                <label for="id_confirm_new_password">Confirm new password</label>
-                <input type="password" name="confirm_new_password" id="id_confirm_new_password" class="text ui-widget-content ui-corner-all">
+        <form id="password_form" action="{% url 'cabinet_personal_data' %}" method="post" class="form-horizontal">
+            {% csrf_token %}
+                <!-- Disable browser's pre population of password and so on -->
+                <input type="password" name="password" style="display: none;" />
 
-                <!-- Allow form submission with keyboard without duplicating the dialog button -->
-                <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
-            </fieldset>
+                <div class="form-group">
+                    <label class="col-sm-7 control-label" for="id_old_password">Password</label>
+                    <div class="col-sm-5">
+                        <input type="password" name="old_password" id="id_old_password" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-7 control-label" for="id_new_password">New password</label>
+                    <div class="col-sm-5">
+                        <input type="password" name="new_password" id="id_new_password" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-7 control-label" for="id_confirm_new_password">Confirm new password</label>
+                    <div class="col-sm-5">
+                        <input type="password" name="confirm_new_password" id="id_confirm_new_password" class="form-control">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" name="password_change" class="btn btn-default">Change password</button>
+                    </div>
+                </div>
         </form>
     </div>
-
 {% endblock %}
 
 {% block script %}
@@ -139,39 +156,37 @@
         old_password = $("#id_old_password"),
         new_password = $("#id_new_password"),
         confirm_new_password = $("#id_confirm_new_password"),
-        allFields = $( [] ).add(old_password).add(new_password).add(confirm_new_password),
         tips = $(".validateTips");
 
-        function updateTips( t ) {
+        function updateTips(t) {
             tips
-                .text( t )
-                .addClass( "ui-state-highlight" );
+                .text(t)
+                .addClass("ui-state-highlight");
             setTimeout(function() {
-                tips.removeClass( "ui-state-highlight", 1500 );
+                tips.removeClass("ui-state-highlight", 1500);
             }, 500 );
         }
-        function addUser() {
-            console.log('add');
-        }
-
-        dialog = $("#dialog-form").dialog({
+        $("#dialog_form").submit(function(event) {
+            if (new_password.val() !== confirm_new_password.val()) {
+                alert("Пароли не совпадают");
+                event.preventDefault();
+            }
+        });
+        dialog = $("#dialog_form").dialog({
             autoOpen: false,
-            height: 300,
-            width: 350,
             modal: true,
-            buttons: {
-                "Create an account": addUser,
-                Cancel: function() {
-                    dialog.dialog( "close" );
-                }
+            draggable: false,
+            open: function() {
+                $(".shadow_all").show();
             },
             close: function() {
-                form[0].reset();
-                allFields.removeClass( "ui-state-error" );
-            }
+                $(".shadow_all").hide();
+            },
+            dialogClass: 'ui-widget-shadow',
         });
         $("#id_password").on("click", function() {
             dialog.dialog("open");
+            $(".ui-dialog-titlebar-close").hide();
         });
 
     });

@@ -78,3 +78,25 @@
     padding: 5px;
     height: 50px;
 }
+
+.ui-dialog {
+    z-index: 1001 !important;
+    padding: 0.3em;
+}
+#dialog_form {
+    padding: 15px;
+    background: #BADA55;
+    display: none;
+}
+.validate_tips {
+    border: 1px solid transparent;
+    padding: 0.3em;
+}
+.shadow_all {
+    position: absolute;
+    height: 5000px;
+    width: 5000px;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    display: none;
+}

@@ -3,7 +3,9 @@ from uuid import uuid4
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import (
+    authenticate, login, logout, update_session_auth_hash
+)
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
@@ -165,12 +167,18 @@ def cabinet(request):
 def personal_data(request):
     context = dict()
     context['messages'] = messages.get_messages(request)
-    if request.method == "POST":
+    if request.method == "POST" and 'profile_changes' in request.POST:
         form = UserInfoForm(data=request.POST)
         if form.is_valid():
             request.user.first_name = form.data['first_name']
             request.user.last_name = form.data['last_name']
-            request.user.email = form.data['email']
+            if request.user.username != form.data['email']:
+                messages.add_message(
+                    request,
+                    messages.INFO,
+                    u'Внимание! логин изменен на %s' % (form.data['email'], )
+                )
+            request.user.username = form.data['email']
             request.user.save()
             messages.add_message(
                 request,
@@ -178,6 +186,35 @@ def personal_data(request):
                 u'Изменения сохранены'
             )
             return redirect('cabinet_personal_data')
+    elif request.method == "POST" and 'password_change' in request.POST:
+        old_password = request.POST.get('old_password')
+        new_password = request.POST.get('new_password')
+        confirm_new_password = request.POST.get('confirm_new_password')
+
+        if not request.user.check_password(old_password):
+            messages.add_message(
+                request,
+                messages.INFO,
+                u'Неверно введен текущий пароль'
+            )
+            return redirect('cabinet_personal_data')
+        if new_password != confirm_new_password:
+            messages.add_message(
+                request,
+                messages.INFO,
+                u'Введенные пароли не совпадают'
+            )
+            return redirect('cabinet_personal_data')
+
+        request.user.set_password(new_password)
+        request.user.save()
+        update_session_auth_hash(request, request.user)
+        messages.add_message(
+            request,
+            messages.INFO,
+            u'Пароль изменен'
+        )
+        return redirect('cabinet_personal_data')
     else:
         init_values = {
             'first_name': request.user.first_name,
