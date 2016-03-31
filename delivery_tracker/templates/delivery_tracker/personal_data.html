@@ -122,27 +122,30 @@
                 <input type="password" name="password" style="display: none;" />
 
                 <div class="form-group">
-                    <label class="col-sm-7 control-label" for="id_old_password">Password</label>
+                    <label class="col-sm-5 control-label" for="id_old_password">Password</label>
                     <div class="col-sm-5">
                         <input type="password" name="old_password" id="id_old_password" class="form-control">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-7 control-label" for="id_new_password">New password</label>
+                    <label class="col-sm-5 control-label" for="id_new_password">New password</label>
                     <div class="col-sm-5">
                         <input type="password" name="new_password" id="id_new_password" class="form-control">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-7 control-label" for="id_confirm_new_password">Confirm new password</label>
+                    <label class="col-sm-5 control-label" for="id_confirm_new_password">Confirm new password</label>
                     <div class="col-sm-5">
                         <input type="password" name="confirm_new_password" id="id_confirm_new_password" class="form-control">
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <div class="col-sm-offset-2 col-sm-10">
+                    <div class="col-sm-offset-1 col-sm-5">
                         <button type="submit" name="password_change" class="btn btn-default">Change password</button>
+                    </div>
+                    <div class="col-sm-offset-1 col-sm-5">
+                        <button id="id_button_cancel_password_change" type="button" name="cancel_password_change" class="btn btn-default">Cancel</button>
                     </div>
                 </div>
         </form>
@@ -174,6 +177,7 @@
         });
         dialog = $("#dialog_form").dialog({
             autoOpen: false,
+            width: 350,
             modal: true,
             draggable: false,
             open: function() {
@@ -189,6 +193,12 @@
             $(".ui-dialog-titlebar-close").hide();
         });
 
+        $(".shadow_all").click(function () {
+            dialog.dialog("close");
+        });
+        $("#id_button_cancel_password_change").click(function () {
+            dialog.dialog("close");
+        });
     });
 </script>
 {% endblock %}
