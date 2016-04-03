@@ -1,6 +1,12 @@
 .top-offset-20 {
     margin-top: 20px;
 }
+.bot-offset-20 {
+    margin-bottom: 20px;
+}
+.top-offset-5 {
+    margin-top: 5px;
+}
 
 .left_img {
     float: left;
@@ -88,6 +94,12 @@
     background: #BADA55;
     display: none;
 }
+#id_popup_info {
+    z-index: 1001;
+    padding: 15px;
+    background: #BADA55;
+    display: none;
+}
 .validate_tips {
     border: 1px solid transparent;
     padding: 0.3em;
@@ -99,4 +111,16 @@
     background: rgba(0,0,0,0.5);
     z-index: 1000;
     display: none;
+}
+
+.top_tab {
+    text-align: center;
+    color: white;
+    background: #A0A09F;
+    margin-left: 10px;
+    margin-right: 10px;
+
+}
+.top_tab_active {
+    background: #BADA55;
 }

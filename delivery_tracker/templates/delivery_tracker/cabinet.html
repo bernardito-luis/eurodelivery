@@ -18,9 +18,9 @@
                 </div>
                 <div class="row top-offset-20">
                     <div class="col-md-3 col-sm-3 link_hover_disabled">
-                        <a href="{% url 'cabinet' %}"><div class="cabinet_page_header"><img src="{% static 'img/order.png' %}" alt="Orders and bills" class="left_img"/><b>Orders and bills</b></div></a>
-                        <a href="{% url 'cabinet' %}"><div class="cabinet_page_button_lime"><b>+ Create new <br>order<br></b></div></a>
-                        <a href="{% url 'cabinet' %}"><div class="cabinet_page_button_gray"><b>My orders</b></div></a>
+                        <a href="{% url 'orders_and_bills' %}"><div class="cabinet_page_header"><img src="{% static 'img/order.png' %}" alt="Orders and bills" class="left_img"/><b>Orders and bills</b></div></a>
+                        <a href="{% url 'new_order' %}"><div class="cabinet_page_button_lime"><b>+ Create new <br>order<br></b></div></a>
+                        <a href="{% url 'my_orders' 'active' %}"><div class="cabinet_page_button_gray"><b>My orders</b></div></a>
                         <a href="{% url 'cabinet' %}"><div class="cabinet_page_button_gray"><b>My bills for paying</b></div></a>
                     </div>
                     <div class="col-md-3 col-sm-3 link_hover_disabled">

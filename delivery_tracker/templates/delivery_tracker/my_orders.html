@@ -1,0 +1,97 @@
+{% extends 'delivery_tracker/base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+    <div class="shadow_all"></div>
+    <div id="id_popup_info"></div>
+    <div class="container">
+        <div class="row top-offset-20">
+            <div class="col-md-offset-8 col-md-3">
+                <b>Welcome{% if user.first_name %}, {{ user.first_name }}{% endif %}!</b>
+            </div>
+            <div class="col-md-1">
+                <b><a href="{% url 'logout' %}">Logout</a></b>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 top-offset-20">
+                <div class="header_stripe">
+                    <a href="{% url 'cabinet' %}">
+                        <span class="glyphicon glyphicon-heart" aria-hidden="true" style="color: white"></span> Главная
+                    </a> -
+                    <a href="{% url 'orders_and_bills' %}">Заказы и счета</a> -
+                    <a href="{% url 'my_orders' 'active' %}">Мои заказы</a> -
+                    <a href="{% url 'my_orders' active_tab %}">
+                        {% if active_tab == 'active' %}
+                            Активные
+                        {% elif active_tab == 'draft' %}
+                            Черновики
+                        {% elif active_tab == 'archive' %}
+                            Архив
+                        {% endif %}
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="row top-offset-20 link_hover_disabled">
+            <a href="{% url 'my_orders' 'active' %}" class="col-md-offset-1 col-md-3 top_tab {% if active_tab == 'active' %} top_tab_active {% endif %}">
+                <h1>Активные</h1>
+            </a>
+            <a href="{% url 'my_orders' 'draft' %}" class="col-md-3 top_tab {% if active_tab == 'draft' %} top_tab_active {% endif %}">
+                <h1>Черновики</h1>
+            </a>
+            <a href="{% url 'my_orders' 'archive' %}" class="col-md-3 top_tab {% if active_tab == 'archive' %} top_tab_active {% endif %}">
+                <h1>Архив</h1>
+            </a>
+        </div>
+        <div class="row">
+            <div class="col-md-offset-4 col-sm-offset-4 col-md-4 col-sm-4">
+                {% for msg in messages %}
+                    <b>{{ msg }}</b><br/>
+                {% endfor %}
+
+            </div>
+        </div>
+
+        <div class="row top-offset-20 bot-offset-20">
+            <div class="col-md-1">№ заказа</div>
+            <div class="col-md-1">Статус</div>
+            <div class="col-md-1">Комментарий администра-тора</div>
+            <div class="col-md-1">Количество позиций</div>
+            <div class="col-md-1">Стоимость</div>
+            <div class="col-md-1">Связанные магазины</div>
+            <div class="col-md-1">Товары</div>
+            <div class="col-md-1">Привязанные счета</div>
+            <div class="col-md-1">Привязанные посылки</div>
+            <div class="col-md-1">Статус лог</div>
+        </div>
+        <div class="row">
+            <div id="id_order_list">
+                {% for order in orders %}
+                    <div class="row">
+                        <div class="col-md-1">{{ order.id }}</div>
+                        <div class="col-md-1">{{ order.status.description }}</div>
+                        <div class="col-md-1">{{ order.admin_comment|truncatechars:40 }}</div>
+                        <div class="col-md-1">{{ order.product_qty }}</div>
+                        <div class="col-md-1">{{ order.complex_price|truncatechars:40 }}</div>
+                        <div class="col-md-1"><button id="id_shop_link_for_{{ order.id }}" type="button" name="profile_changes" class="btn btn-default">Список</button></div>
+                        <div class="col-md-1"><button id="id_product_link_for_{{ order.id }}" type="button" name="profile_changes" class="btn btn-default">Список</button></div>
+                        <div class="col-md-1"><button id="id_bill_link_for_{{ order.id }}" type="button" name="profile_changes" class="btn btn-default">Список</button></div>
+                        <div class="col-md-1"><button id="id_shipping_link_for_{{ order.id }}" type="button" name="profile_changes" class="btn btn-default">Список</button></div>
+                        <div class="col-md-1"><button id="id_status_link_for_{{ order.id }}" type="button" name="profile_changes" class="btn btn-default">Список</button></div>
+
+                        <div class="col-md-offset-1 col-md-1">
+                            <button id="id_open_order_{{ order.id }}" type="button" name="profile_changes" class="btn btn-default">Открыть</button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+</script>
+{% endblock %}

@@ -1,4 +1,5 @@
 from django.conf.urls import url
+from django.shortcuts import redirect
 
 from delivery_tracker import views
 
@@ -18,4 +19,11 @@ urlpatterns = [
         views.cabinet, name='cabinet'),
     url(r'^tracker/cabinet/personal_data/$',
         views.personal_data, name='cabinet_personal_data'),
+    url(r'^tracker/orders_and_bills/$',
+        views.orders_and_bills, name='orders_and_bills'),
+    url(r'^tracker/new_order/$', views.new_order, name='new_order'),
+    url(r'^tracker/my_orders/(?P<status>\w+)$', views.my_orders, name='my_orders'),
 ]
+
+
+

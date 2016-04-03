@@ -10,11 +10,14 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
-from django.shortcuts import render, redirect, HttpResponse
+from django.http import HttpResponseNotFound, HttpResponse
+from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 
 from delivery_tracker.forms import UserForm, ForgotPasswordForm, UserInfoForm
-from delivery_tracker.models import UserRegistrationLink
+from delivery_tracker.models import (
+    UserRegistrationLink, PurchaseOrder, Product, PurchaseOrderStatus)
+from delivery_tracker.models import CURRENT_FEE, PURCHASE_ORDER_STATUS
 from delivery_tracker.utils import generate_password
 
 
@@ -225,3 +228,98 @@ def personal_data(request):
         form = UserInfoForm(initial=init_values)
     context = {'form': form, 'masked_password': '******'}
     return render(request, 'delivery_tracker/personal_data.html', context)
+
+
+@login_required
+def orders_and_bills(request):
+    return redirect('new_order')
+
+
+@login_required
+def new_order(request):
+    context = dict()
+    context['current_fee'] = CURRENT_FEE
+    if request.method == 'POST':
+        new_purchase_order = PurchaseOrder.objects.create(
+            user=request.user,
+            status=PurchaseOrderStatus.objects.get(
+                id=PURCHASE_ORDER_STATUS['ordered']
+            ),
+            shipping_cost=request.POST['shipping_cost'] or 0,
+            coupon=request.POST['coupon'],
+            discount=request.POST['discount'] or 0,
+            user_comment=request.POST['user_comment']
+        )
+        i = 0
+        print(request.POST)
+        while True:
+            i += 1
+            try:
+                prod_link = request.POST['product_link_%d' % (i, )]
+            except KeyError:
+                break
+            if (not request.POST.get('product_link_%d' % (i, )) or
+                not request.POST.get('color_%d' % (i, )) or
+                not request.POST.get('size_%d' % (i, )) or
+                not request.POST.get('quantity_%d' % (i, )) or
+                not request.POST.get('price_%d' % (i, )) or
+                request.POST.get('discount_in_shop_%d' % (i, )) is None
+            ):
+                messages.add_message(
+                    request,
+                    messages.INFO,
+                    u'Не заполнены обязательные поля у товаров!'
+                )
+                return redirect('new_order')
+            try:
+                Product.objects.create(
+                    purchase_order=new_purchase_order,
+                    user=request.user,
+                    shop_link=request.POST['shop_link_%d' % (i, )],
+                    product_link=request.POST['product_link_%d' % (i, )],
+                    vendor_code=request.POST['vendor_code_%d' % (i, )],
+                    name=request.POST['name_%d' % (i, )],
+                    color=request.POST['color_%d' % (i, )],
+                    size=request.POST['size_%d' % (i, )],
+                    quantity=request.POST['quantity_%d' % (i, )],
+                    price=request.POST['price_%d' % (i, )],
+                    discount_code=request.POST['discount_code_%d' % (i, )],
+                    discount_in_shop=request.POST['discount_in_shop_%d' % (i, )],
+                    note=request.POST['note_%d' % (i, )]
+                )
+            except KeyError:
+                break
+    return render(request, 'delivery_tracker/new_order.html', context)
+
+
+@login_required
+def my_orders(request, status):
+    context = dict()
+    if status == 'active':
+        cur_status = (
+            PURCHASE_ORDER_STATUS['ordered'],
+            PURCHASE_ORDER_STATUS['waits_for_payment'],
+            PURCHASE_ORDER_STATUS['in_progress'],
+            PURCHASE_ORDER_STATUS['coming_to_storage'],
+            PURCHASE_ORDER_STATUS['received_partially'],
+        )
+    elif status == 'draft':
+        cur_status = (
+            PURCHASE_ORDER_STATUS['draft'],
+        )
+    elif status == 'archive':
+        cur_status = (
+            PURCHASE_ORDER_STATUS['canceled'],
+            PURCHASE_ORDER_STATUS['received_to_stock'],
+        )
+    else:
+        return HttpResponseNotFound('<h1>Страница не найдена</h1>')
+    context['active_tab'] = status
+
+    context['orders'] = PurchaseOrder.objects.filter(
+        user=request.user,
+        status_id__in=cur_status
+    )
+
+
+    return render(request, 'delivery_tracker/my_orders.html', context)
