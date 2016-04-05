@@ -2,7 +2,7 @@
 {% load staticfiles %}
 
 {% block content %}
-    <div class="shadow_all"></div>
+    <div id="id_shadow_all"></div>
     <div id="id_popup_info"></div>
     <div class="container">
         <div class="row top-offset-20">
@@ -74,7 +74,7 @@
                         <div class="col-md-1">{{ order.admin_comment|truncatechars:40 }}</div>
                         <div class="col-md-1">{{ order.product_qty }}</div>
                         <div class="col-md-1">{{ order.complex_price|truncatechars:40 }}</div>
-                        <div class="col-md-1"><button id="id_shop_link_for_{{ order.id }}" type="button" name="profile_changes" class="btn btn-default">Список</button></div>
+                        <div class="col-md-1"><button order-id="{{ order.id }}" type="button" name="profile_changes" class="btn btn-default shop_link">Список</button></div>
                         <div class="col-md-1"><button id="id_product_link_for_{{ order.id }}" type="button" name="profile_changes" class="btn btn-default">Список</button></div>
                         <div class="col-md-1"><button id="id_bill_link_for_{{ order.id }}" type="button" name="profile_changes" class="btn btn-default">Список</button></div>
                         <div class="col-md-1"><button id="id_shipping_link_for_{{ order.id }}" type="button" name="profile_changes" class="btn btn-default">Список</button></div>
@@ -93,5 +93,27 @@
 
 {% block script %}
 <script>
+    var html_close_button = '<button id="id_close_popup" type="button" class="btn btn-default">Закрыть</button>';
+    $(".shop_link").click(function () {
+        $.post("{% url 'ajax_linked_shops' %}", {order_id: $(this).attr('order-id'), csrfmiddlewaretoken: "{{ csrf_token }}" })
+            .done(function (data) {
+                $("#id_popup_info").empty().append(data);
+                $("#id_popup_info").append(html_close_button);
+
+                $("#id_close_popup").click(function () {
+                    $("#id_shadow_all").hide();
+                    $("#id_popup_info").hide();
+                });
+            }
+        );
+
+        $("#id_shadow_all").show();
+        $("#id_popup_info").show();
+
+    });
+    $("#id_shadow_all").click(function () {
+        $("#id_shadow_all").hide();
+        $("#id_popup_info").hide();
+    });
 </script>
 {% endblock %}

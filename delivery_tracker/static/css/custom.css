@@ -97,17 +97,26 @@
 #id_popup_info {
     z-index: 1001;
     padding: 15px;
-    background: #BADA55;
+    background: white;
+    border: solid;
+    border-color: #BADA55;
+    top: 50%;
+    left: 50%;
+    height: 500px;
+    width: 390px;
+    margin-top: -250px;
+    margin-left: -225px;
     display: none;
+    position: fixed;
 }
 .validate_tips {
     border: 1px solid transparent;
     padding: 0.3em;
 }
-.shadow_all {
+#id_shadow_all {
     position: absolute;
-    height: 5000px;
-    width: 5000px;
+    height: 100%;
+    width: 100%;
     background: rgba(0,0,0,0.5);
     z-index: 1000;
     display: none;

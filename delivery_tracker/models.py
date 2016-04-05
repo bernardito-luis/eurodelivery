@@ -54,7 +54,10 @@ class PurchaseOrder(models.Model):
 
     @property
     def complex_price(self):
-        return 'to be implemented'
+        products_price = sum(
+            p.sum_price for p in Product.objects.filter(purchase_order=self)
+        )
+        return products_price + self.shipping_cost + self.fee - self.discount
 
     class Meta:
         db_table = 'purchase_order'
@@ -74,6 +77,16 @@ class Product(models.Model):
     discount_code = models.CharField(max_length=64, blank=True, null=True)
     discount_in_shop = models.FloatField(blank=True, null=True)
     note = models.CharField(max_length=255, blank=True, null=True)
+
+    @property
+    def sum_price(self):
+        return self.quantity * self.price - self.discount_in_shop
+
+    @property
+    def shop_link_trimmed(self):
+        if len(self.shop_link) >= 77:
+            return self.shop_link[:77] + '...'
+        return self.shop_link
 
     class Meta:
         db_table = 'product'
