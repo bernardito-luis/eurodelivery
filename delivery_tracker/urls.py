@@ -22,7 +22,10 @@ urlpatterns = [
     url(r'^tracker/orders_and_bills/$',
         views.orders_and_bills, name='orders_and_bills'),
     url(r'^tracker/new_order/$', views.new_order, name='new_order'),
-    url(r'^tracker/my_orders/(?P<status>\w+)$', views.my_orders, name='my_orders'),
+    url(r'^tracker/my_orders/(?P<status>\w+)$',
+        views.my_orders, name='my_orders'),
+    url(r'^tracker/ajax/my_orders/get_linked_shops/$',
+        views.ajax_linked_shops, name='ajax_linked_shops'),
 ]
 
 

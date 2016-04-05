@@ -10,7 +10,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseNotFound, HttpResponse
+from django.http import (
+    HttpResponseNotFound, HttpResponse, HttpResponseForbidden
+)
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 
@@ -179,14 +181,14 @@ def personal_data(request):
                 messages.add_message(
                     request,
                     messages.INFO,
-                    u'Внимание! логин изменен на %s' % (form.data['email'], )
+                    'Внимание! логин изменен на %s' % (form.data['email'], )
                 )
             request.user.username = form.data['email']
             request.user.save()
             messages.add_message(
                 request,
                 messages.INFO,
-                u'Изменения сохранены'
+                'Изменения сохранены'
             )
             return redirect('cabinet_personal_data')
     elif request.method == "POST" and 'password_change' in request.POST:
@@ -198,14 +200,14 @@ def personal_data(request):
             messages.add_message(
                 request,
                 messages.INFO,
-                u'Неверно введен текущий пароль'
+                'Неверно введен текущий пароль'
             )
             return redirect('cabinet_personal_data')
         if new_password != confirm_new_password:
             messages.add_message(
                 request,
                 messages.INFO,
-                u'Введенные пароли не совпадают'
+                'Введенные пароли не совпадают'
             )
             return redirect('cabinet_personal_data')
 
@@ -215,7 +217,7 @@ def personal_data(request):
         messages.add_message(
             request,
             messages.INFO,
-            u'Пароль изменен'
+            'Пароль изменен'
         )
         return redirect('cabinet_personal_data')
     else:
@@ -251,7 +253,6 @@ def new_order(request):
             user_comment=request.POST['user_comment']
         )
         i = 0
-        print(request.POST)
         while True:
             i += 1
             try:
@@ -268,7 +269,7 @@ def new_order(request):
                 messages.add_message(
                     request,
                     messages.INFO,
-                    u'Не заполнены обязательные поля у товаров!'
+                    'Не заполнены обязательные поля у товаров!'
                 )
                 return redirect('new_order')
             try:
@@ -321,5 +322,20 @@ def my_orders(request, status):
         status_id__in=cur_status
     )
 
-
     return render(request, 'delivery_tracker/my_orders.html', context)
+
+@login_required
+def ajax_linked_shops(request):
+    if request.method == 'POST':
+        order_id = request.POST.get('order_id')
+        order = PurchaseOrder.objects.get(id=order_id)
+        if order.user != request.user:
+            return HttpResponseForbidden()
+
+        result_html = "<h2>Связанные магазины:</h2>"
+        result_html += "<ul>"
+        for product in Product.objects.filter(purchase_order=order):
+            result_html += "<li>" + product.shop_link_trimmed + "</li>"
+        result_html += "</ul>"
+        return HttpResponse(result_html)
+    return HttpResponseForbidden()
