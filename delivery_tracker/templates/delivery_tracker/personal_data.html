@@ -181,10 +181,10 @@
             modal: true,
             draggable: false,
             open: function() {
-                $(".shadow_all").show();
+                $("#id_shadow_all").show();
             },
             close: function() {
-                $(".shadow_all").hide();
+                $("#id_shadow_all").hide();
             },
             dialogClass: 'ui-widget-shadow',
         });
@@ -193,7 +193,7 @@
             $(".ui-dialog-titlebar-close").hide();
         });
 
-        $(".shadow_all").click(function () {
+        $("#id_shadow_all").click(function () {
             dialog.dialog("close");
         });
         $("#id_button_cancel_password_change").click(function () {
