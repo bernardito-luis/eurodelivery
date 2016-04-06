@@ -1,4 +1,5 @@
 import datetime
+import logging
 from uuid import uuid4
 
 from django.conf import settings
@@ -21,6 +22,9 @@ from delivery_tracker.models import (
     UserRegistrationLink, PurchaseOrder, Product, PurchaseOrderStatus)
 from delivery_tracker.models import CURRENT_FEE, PURCHASE_ORDER_STATUS
 from delivery_tracker.utils import generate_password
+
+
+logger = logging.getLogger(__name__)
 
 
 def home_page(request):
@@ -242,54 +246,71 @@ def new_order(request):
     context = dict()
     context['current_fee'] = CURRENT_FEE
     if request.method == 'POST':
-        new_purchase_order = PurchaseOrder.objects.create(
-            user=request.user,
-            status=PurchaseOrderStatus.objects.get(
-                id=PURCHASE_ORDER_STATUS['ordered']
-            ),
-            shipping_cost=request.POST['shipping_cost'] or 0,
-            coupon=request.POST['coupon'],
-            discount=request.POST['discount'] or 0,
-            user_comment=request.POST['user_comment']
-        )
-        i = 0
-        while True:
-            i += 1
-            try:
-                prod_link = request.POST['product_link_%d' % (i, )]
-            except KeyError:
-                break
-            if (not request.POST.get('product_link_%d' % (i, )) or
-                not request.POST.get('color_%d' % (i, )) or
-                not request.POST.get('size_%d' % (i, )) or
-                not request.POST.get('quantity_%d' % (i, )) or
-                not request.POST.get('price_%d' % (i, )) or
-                request.POST.get('discount_in_shop_%d' % (i, )) is None
-            ):
-                messages.add_message(
-                    request,
-                    messages.INFO,
-                    'Не заполнены обязательные поля у товаров!'
+        if 'new_order_cancel' in request.POST:
+            return redirect('cabinet')
+        elif 'new_order' in request.POST or 'new_order_draft' in request.POST:
+            if 'new_order' in request.POST:
+                new_status = PurchaseOrderStatus.objects.get(
+                    id=PURCHASE_ORDER_STATUS['ordered']
                 )
-                return redirect('new_order')
-            try:
-                Product.objects.create(
-                    purchase_order=new_purchase_order,
-                    user=request.user,
-                    shop_link=request.POST['shop_link_%d' % (i, )],
-                    product_link=request.POST['product_link_%d' % (i, )],
-                    vendor_code=request.POST['vendor_code_%d' % (i, )],
-                    name=request.POST['name_%d' % (i, )],
-                    color=request.POST['color_%d' % (i, )],
-                    size=request.POST['size_%d' % (i, )],
-                    quantity=request.POST['quantity_%d' % (i, )],
-                    price=request.POST['price_%d' % (i, )],
-                    discount_code=request.POST['discount_code_%d' % (i, )],
-                    discount_in_shop=request.POST['discount_in_shop_%d' % (i, )],
-                    note=request.POST['note_%d' % (i, )]
+            elif 'new_order_draft' in request.POST:
+                new_status = PurchaseOrderStatus.objects.get(
+                    id=PURCHASE_ORDER_STATUS['draft']
                 )
-            except KeyError:
-                break
+            new_purchase_order = PurchaseOrder.objects.create(
+                user=request.user,
+                status=new_status,
+                shipping_cost=request.POST['shipping_cost'] or 0,
+                coupon=request.POST['coupon'],
+                discount=request.POST['discount'] or 0,
+                user_comment=request.POST['user_comment']
+            )
+
+            max_prod_num = int(request.POST['max_prod_num'])
+            prod_count = 0
+            for i in range(1, max_prod_num+1):
+                try:
+                    prod_link = request.POST['product_link_%d' % (i, )]
+                except KeyError:
+                    continue
+                if (not request.POST.get('product_link_%d' % (i, )) or
+                        not request.POST.get('color_%d' % (i, )) or
+                        not request.POST.get('size_%d' % (i, )) or
+                        not request.POST.get('quantity_%d' % (i, )) or
+                        not request.POST.get('price_%d' % (i, )) or
+                        request.POST.get('discount_in_shop_%d' % (i, )) is None
+                    ):
+                    messages.add_message(
+                        request,
+                        messages.INFO,
+                        'Не заполнены обязательные поля у товаров!'
+                    )
+                    return redirect('new_order')
+                try:
+                    Product.objects.create(
+                        purchase_order=new_purchase_order,
+                        user=request.user,
+                        shop_link=request.POST.get('shop_link_%d' % (i, )),
+                        product_link=request.POST['product_link_%d' % (i, )],
+                        vendor_code=request.POST.get('vendor_code_%d' % (i, )),
+                        name=request.POST.get('name_%d' % (i, )),
+                        color=request.POST['color_%d' % (i, )],
+                        size=request.POST['size_%d' % (i, )],
+                        quantity=request.POST['quantity_%d' % (i, )],
+                        price=request.POST['price_%d' % (i, )],
+                        discount_code=request.POST.get('discount_code_%d' % (i, )),
+                        discount_in_shop=request.POST['discount_in_shop_%d' % (i, )],
+                        note=request.POST.get('note_%d' % (i, ))
+                    )
+                    prod_count += 1
+
+                except KeyError as e:
+                    continue
+            logger.info(
+                'Saved order id: %d with %d products' %
+                (new_purchase_order.id, prod_count)
+            )
+            return redirect('new_order')
     return render(request, 'delivery_tracker/new_order.html', context)
 
 

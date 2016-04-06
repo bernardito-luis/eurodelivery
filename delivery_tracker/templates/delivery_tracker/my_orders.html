@@ -68,7 +68,7 @@
         <div class="row">
             <div id="id_order_list">
                 {% for order in orders %}
-                    <div class="row">
+                    <div class="row top-offset-5">
                         <div class="col-md-1">{{ order.id }}</div>
                         <div class="col-md-1">{{ order.status.description }}</div>
                         <div class="col-md-1">{{ order.admin_comment|truncatechars:40 }}</div>

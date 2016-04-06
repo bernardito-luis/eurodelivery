@@ -70,6 +70,7 @@
                             <input id="id_current_fee" type="text" name="current_fee" value="{{ current_fee }}" readonly="1" class="form-control" />
                         </div>
                     </div>
+                    <input id="id_max_prod_num" name="max_prod_num" type="hidden" value="1" />
 
                     <div class="row">
                         <div class="col-md-1">Магазин</div>
@@ -86,7 +87,7 @@
                         <div class="col-md-1">Примечание</div>
                     </div>
                     <div id="id_product_list">
-                    <div class="row">
+                    <div id="id_product_row_1" class="row">
                         <div class="col-sm-1">
                             <input id="id_shop_link_1" type="text" name="shop_link_1" class="form-control" />
                         </div>
@@ -106,22 +107,23 @@
                             <input id="id_size_1" type="text" name="size_1" class="form-control" />
                         </div>
                         <div class="col-sm-1">
-                            <input id="id_quantity_1" type="text" name="quantity_1" class="form-control" />
+                            <input id="id_quantity_1" type="text" name="quantity_1" class="form-control calc_sum" />
                         </div>
                         <div class="col-sm-1">
-                            <input id="id_price_1" type="text" name="price_1" class="form-control" />
+                            <input id="id_price_1" type="text" name="price_1" class="form-control calc_sum" />
                         </div>
                         <div class="col-sm-1">
                             <input id="id_discount_code_1" type="text" name="discount_code_1" class="form-control" />
                         </div>
                         <div class="col-sm-1">
-                            <input id="id_discount_in_shop_1" type="text" name="discount_in_shop_1" value="0" class="form-control" />
+                            <input id="id_discount_in_shop_1" type="text" name="discount_in_shop_1" value="0" class="form-control calc_sum" />
                         </div>
                         <div class="col-sm-1">
-                            <input id="id_sum_1" type="text" name="sum_1" readonly="1" class="form-control" />
+                            <input id="id_sum_1" type="text" name="sum_1" readonly="1" class="form-control product_sum" />
                         </div>
                         <div class="col-sm-1">
-                            <input id="id_note_1" type="text" name="note_1" class="form-control" />
+                            <input id="id_note_1" type="text" name="note_1" class="form-control" style="float: left;" />
+                            <button id="id_delete_product_1" type="button" class="btn btn-default delete_product">X</button>
                         </div>
                     </div>
                     </div>
@@ -131,9 +133,21 @@
                         </div>
                     </div>
 
+                    <div class="form-group">
+                        <label for="id_order_total" class="control-label col-sm-3">Итого сумма Вашего заказа:</label>
+                        <div class="col-sm-2">
+                            <input id="id_order_total" type="text" disabled value="" class="form-control" />
+                        </div>
+                    </div>
                     <div class="row form-group">
-                        <div class="col-sm-offset-2 col-sm-10">
-                            <button type="submit" name="profile_changes" class="btn btn-default">Заказать</button>
+                        <div class="col-md-offset-2 col-md-1">
+                            <button type="submit" name="new_order" class="btn btn-default">Заказать</button>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" name="new_order_draft" class="btn btn-default">Сохранить как черновик</button>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" name="new_order_cancel" class="btn btn-default">Отмена</button>
                         </div>
                     </div>
                 </form>
@@ -147,11 +161,61 @@
 {% block script %}
 <script>
     var current_prod_qty = 1;
+
+    function calc_sum() {
+        var product_id = this.id.substring(this.id.lastIndexOf("_")+1);
+        var qty_id = '#id_quantity_' + product_id;
+        var price_id = '#id_price_' + product_id;
+        var discount_in_shop_id = '#id_discount_in_shop_' + product_id;
+        var sum_id = '#id_sum_' + product_id;
+        if ($(qty_id).val() !== undefined && $(qty_id).val() !== '' &&
+                $(price_id).val() !== undefined && $(price_id).val() !== '' &&
+                $(discount_in_shop_id).val() !== undefined && $(discount_in_shop_id).val() !== ''
+            ) {
+            var qty = parseFloat($(qty_id).val(), 10);
+            var price = parseFloat($(price_id).val(), 10);
+            var discount_in_shop = parseFloat($(discount_in_shop_id).val(), 10);
+            if (!isNaN(qty) && !isNaN(price) && !isNaN(discount_in_shop)) {
+                var sum = qty*price - discount_in_shop;
+                if (sum > 0) {
+                    $(sum_id).attr('value', sum);
+                    calc_total_sum();
+                } else {
+                    $(sum_id).attr('value', 0);
+                }
+            }
+            else {
+                $(sum_id).attr('value', '');
+            }
+        }
+        else {
+            $(sum_id).attr('value', '');
+        }
+    }
+    $(".calc_sum").on('input', calc_sum);
+
+    function delete_product() {
+        var product_id = this.id.substring(this.id.lastIndexOf("_")+1);
+        $('#id_product_row_'+product_id).remove();
+        calc_total_sum();
+    }
+    $(".delete_product").click(delete_product);
+
+    function calc_total_sum() {
+        var total_sum = 0;
+        $(".product_sum").each(function () {
+            if (!isNaN($(this).val())) {
+                total_sum += parseFloat($(this).val(), 10);
+            }
+        });
+        $("#id_order_total").attr('value', total_sum);
+    }
+
     $("#id_add_product").click(function () {
         current_prod_qty++;
-        console.log(current_prod_qty);
+        $("#id_max_prod_num").attr('value', current_prod_qty);
         var new_product = `
-            <div class="row top-offset-5">
+            <div id="id_product_row_(product_num)" class="row top-offset-5">
                 <div class="col-sm-1">
                     <input id="id_shop_link_(product_num)" type="text" name="shop_link_(product_num)" class="form-control" />
                 </div>
@@ -171,30 +235,32 @@
                     <input id="id_size_(product_num)" type="text" name="size_(product_num)" class="form-control" />
                 </div>
                 <div class="col-sm-1">
-                    <input id="id_quantity_(product_num)" type="text" name="quantity_(product_num)" class="form-control" />
+                    <input id="id_quantity_(product_num)" type="text" name="quantity_(product_num)" class="form-control calc_sum" />
                 </div>
                 <div class="col-sm-1">
-                    <input id="id_price_(product_num)" type="text" name="price_(product_num)" class="form-control" />
+                    <input id="id_price_(product_num)" type="text" name="price_(product_num)" class="form-control calc_sum" />
                 </div>
                 <div class="col-sm-1">
                     <input id="id_discount_code_(product_num)" type="text" name="discount_code_(product_num)" class="form-control" />
                 </div>
                 <div class="col-sm-1">
-                    <input id="id_discount_in_shop_(product_num)" type="text" name="discount_in_shop_(product_num)" value="0" class="form-control" />
+                    <input id="id_discount_in_shop_(product_num)" type="text" name="discount_in_shop_(product_num)" value="0" class="form-control calc_sum" />
                 </div>
                 <div class="col-sm-1">
-                    <input id="id_sum_(product_num)" type="text" name="sum_(product_num)" readonly="1" class="form-control" />
+                    <input id="id_sum_(product_num)" type="text" name="sum_(product_num)" readonly="1" class="form-control product_sum" />
                 </div>
                 <div class="col-sm-1">
-                    <input id="id_note_(product_num)" type="text" name="note_(product_num)" class="form-control" />
+                    <input id="id_note_(product_num)" type="text" name="note_(product_num)" class="form-control" style="float: left;" />
+                    <button id="id_delete_product_(product_num)"type="button" class="btn btn-default delete_product">X</button>
                 </div>
             </div>
         `;
         new_product = new_product.replace(/\(product_num\)/g, current_prod_qty);
-        var foo = 'aaaa___aa';
-        foo = foo.replace(/_/g, 'b');
-        console.log(foo);
         $("#id_product_list").append(new_product);
+
+        $(".calc_sum").on('input', calc_sum);
+        $(".delete_product").click(delete_product);
+
     });
 
 </script>
