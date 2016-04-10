@@ -261,9 +261,9 @@ def new_order(request):
                 user=request.user,
                 status=new_status,
                 shipping_cost=request.POST['shipping_cost'] or 0,
-                coupon=request.POST['coupon'],
+                coupon=request.POST.get('coupon') or '',
                 discount=request.POST['discount'] or 0,
-                user_comment=request.POST['user_comment']
+                user_comment=request.POST.get('user_comment') or ''
             )
 
             max_prod_num = int(request.POST['max_prod_num'])

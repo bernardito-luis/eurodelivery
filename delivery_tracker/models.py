@@ -77,27 +77,50 @@ class PurchaseOrder(models.Model):
 @receiver(pre_save)
 def notify_admin_and_user(sender, instance, *args, **kwargs):
     if sender == PurchaseOrder:
-        old_status = PurchaseOrder.objects.get(id=instance.id).status
         new_status = instance.status
-        if old_status != new_status:
-            # send mail to admin
-            send_mail(
-                'Смена статуса заказа',
-                'Статус заказа №%d изменился с %s на %s' %
-                    (instance.id, old_status, new_status),
-                settings.EMAIL_HOST_USER,
-                [User.objects.get(id=1).email, ],
-                fail_silently=False,
-            )
-            # send mail to user
-            send_mail(
-                'Смена статуса заказа',
-                'Статус заказа №%d изменился с %s на %s' %
-                    (instance.id, old_status, new_status),
-                settings.EMAIL_HOST_USER,
-                [instance.user.username, ],
-                fail_silently=False,
-            )
+        try:
+            old_status = PurchaseOrder.objects.get(id=instance.id).status
+            if old_status != new_status:
+                # send mail to admin
+                send_mail(
+                    'Смена статуса заказа',
+                    'Статус заказа №%d изменился с %s на %s '
+                    '(пользователь %s)' % (
+                        instance.id, old_status, new_status,
+                        instance.user.username
+                    ),
+                    settings.EMAIL_HOST_USER,
+                    [User.objects.get(id=1).email, ],
+                    fail_silently=False,
+                )
+                # send mail to user
+                send_mail(
+                    'Смена статуса заказа',
+                    'Статус заказа №%d изменился с %s на %s' % (
+                        instance.id, old_status, new_status),
+                    settings.EMAIL_HOST_USER,
+                    [instance.user.username, ],
+                    fail_silently=False,
+                )
+        except PurchaseOrder.DoesNotExist:
+                # send mail to admin
+                send_mail(
+                    'Сохранен новый заказ',
+                    'Статус заказа №%d %s (пользователь %s)' % (
+                        instance.id, new_status, instance.user.username),
+                    settings.EMAIL_HOST_USER,
+                    [User.objects.get(id=1).email, ],
+                    fail_silently=False,
+                )
+                # send mail to user
+                send_mail(
+                    'Сохранен новый заказ',
+                    'Статус заказа №%d %s' % (
+                        instance.id, new_status),
+                    settings.EMAIL_HOST_USER,
+                    [User.objects.get(id=1).email, ],
+                    fail_silently=False,
+                )
 
 
 class Product(models.Model):
