@@ -37,9 +37,9 @@
 
                     {{ form.shipping_cost.errors }}
                     <div class="form-group">
-                        <label for="id_shipping_cost" class="control-label col-sm-2">Стоимость доставки</label>
+                        <label for="id_shipping_cost" class="control-label col-sm-2">Стоимость доставки*</label>
                         <div class="col-sm-5">
-                            <input id="id_shipping_cost" type="text" name="shipping_cost" value="{{ form.shipping_cost.value }}" class="form-control" />
+                            <input id="id_shipping_cost" type="text" name="shipping_cost" value="{{ form.shipping_cost.value }}" class="form-control calc_total_sum" />
                         </div>
                     </div>
                     {{ form.coupon.errors }}
@@ -51,9 +51,9 @@
                     </div>
                     {{ form.discount.errors }}
                     <div class="form-group">
-                        <label for="id_discount" class="control-label col-sm-2">Размер скидки на наши услуги</label>
+                        <label for="id_discount" class="control-label col-sm-2">Размер скидки на наши услуги*</label>
                         <div class="col-sm-5">
-                            <input id="id_discount" type="text" name="discount" value="{{ form.discount.value }}" class="form-control" />
+                            <input id="id_discount" type="text" name="discount" value="{{ form.discount.value }}" class="form-control calc_total_sum" />
                         </div>
                     </div>
                     {{ form.user_comment.errors }}
@@ -193,6 +193,7 @@
         }
     }
     $(".calc_sum").on('input', calc_sum);
+    $(".calc_total_sum").on('input', calc_total_sum);
 
     function delete_product() {
         var product_id = this.id.substring(this.id.lastIndexOf("_")+1);
@@ -204,10 +205,22 @@
     function calc_total_sum() {
         var total_sum = 0;
         $(".product_sum").each(function () {
-            if (!isNaN($(this).val())) {
+            if (!isNaN($(this).val()) && $(this).val() !== '') {
                 total_sum += parseFloat($(this).val(), 10);
             }
         });
+        if ($('#id_shipping_cost').val() !== '') {
+            total_sum += parseFloat($('#id_shipping_cost').val(), 10);
+        }
+        if ($('#id_discount').val() !== '') {
+            total_sum -= parseFloat($('#id_discount').val(), 10);
+        }
+        if ($('#id_current_fee').val() !== '') {
+            total_sum += parseFloat($('#id_current_fee').val(), 10);
+        }
+        if (total_sum < 0) {
+            total_sum = 0;
+        }
         $("#id_order_total").attr('value', total_sum);
     }
 

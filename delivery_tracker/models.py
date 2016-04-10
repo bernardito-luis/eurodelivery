@@ -1,4 +1,9 @@
 from django.db import models
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
+from django.conf import settings
+from django.contrib.auth.models import User
+from django.core.mail import send_mail
 
 
 CURRENT_FEE = 5
@@ -34,6 +39,9 @@ class PurchaseOrderStatus(models.Model):
     # [PurchaseOrderStatus.objects.create(description=s) for s in statuses]
     description = models.CharField(max_length=64)
 
+    def __str__(self):
+        return str(self.id) + ': ' + self.description
+
     class Meta:
         db_table = 'purchase_order_status'
 
@@ -59,13 +67,42 @@ class PurchaseOrder(models.Model):
         )
         return products_price + self.shipping_cost + self.fee - self.discount
 
+    def __str__(self):
+        return 'Order id: ' + str(self.id)
+
     class Meta:
         db_table = 'purchase_order'
 
 
+@receiver(pre_save)
+def notify_admin_and_user(sender, instance, *args, **kwargs):
+    if sender == PurchaseOrder:
+        old_status = PurchaseOrder.objects.get(id=instance.id).status
+        new_status = instance.status
+        if old_status != new_status:
+            # send mail to admin
+            send_mail(
+                'Смена статуса заказа',
+                'Статус заказа №%d изменился с %s на %s' %
+                    (instance.id, old_status, new_status),
+                settings.EMAIL_HOST_USER,
+                [User.objects.get(id=1).email, ],
+                fail_silently=False,
+            )
+            # send mail to user
+            send_mail(
+                'Смена статуса заказа',
+                'Статус заказа №%d изменился с %s на %s' %
+                    (instance.id, old_status, new_status),
+                settings.EMAIL_HOST_USER,
+                [instance.user.username, ],
+                fail_silently=False,
+            )
+
+
 class Product(models.Model):
     purchase_order = models.ForeignKey(PurchaseOrder, blank=True, null=True)
-    user = models.ForeignKey('auth.User')  # don't like this duplication...
+    user = models.ForeignKey('auth.User')
     shop_link = models.CharField(max_length=1024, blank=True, null=True)
     product_link = models.CharField(max_length=1024)
     vendor_code = models.CharField(max_length=64, blank=True, null=True)
@@ -87,6 +124,9 @@ class Product(models.Model):
         if len(self.shop_link) >= 77:
             return self.shop_link[:77] + '...'
         return self.shop_link
+
+    def __str__(self):
+        return 'id_' + str(self.id) + ' ' + self.name
 
     class Meta:
         db_table = 'product'
