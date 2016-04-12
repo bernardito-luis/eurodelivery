@@ -77,6 +77,27 @@ class PurchaseOrder(models.Model):
 @receiver(pre_save)
 def notify_admin_and_user(sender, instance, *args, **kwargs):
     if sender == PurchaseOrder:
+        if not instance.id:
+            # new order
+            # send mail to admin
+            send_mail(
+                'Новый заказ',
+                'Пользователь %s оформил новый заказ' % (
+                    instance.user.username
+                ),
+                settings.EMAIL_HOST_USER,
+                [User.objects.get(id=1).email, ],
+                fail_silently=False,
+            )
+            # send mail to user
+            send_mail(
+                'Новый заказ',
+                'Позравляем! Вы оформили заказ!',
+                settings.EMAIL_HOST_USER,
+                [instance.user.username, ],
+                fail_silently=False,
+            )
+
         new_status = instance.status
         try:
             old_status = PurchaseOrder.objects.get(id=instance.id).status

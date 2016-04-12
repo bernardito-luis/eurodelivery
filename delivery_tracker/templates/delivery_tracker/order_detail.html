@@ -1,0 +1,138 @@
+{% extends 'delivery_tracker/base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+    <div class="container">
+        <div class="row top-offset-20">
+            <div class="col-md-offset-8 col-md-3">
+                <b>Welcome{% if user.first_name %}, {{ user.first_name }}{% endif %}!</b>
+            </div>
+            <div class="col-md-1">
+                <b><a href="{% url 'logout' %}">Logout</a></b>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 top-offset-20">
+                <div class="header_stripe">
+                    <a href="{% url 'cabinet' %}">
+                        <span class="glyphicon glyphicon-heart" aria-hidden="true" style="color: white"></span> Главная
+                    </a> -
+                    <a href="{% url 'orders_and_bills' %}">Заказы и счета</a> -
+                    <a href="{% url 'my_orders' status='active' %}">Мои заказы</a> -
+                    <a href="{% url 'order' order_id=order.id %}">Заказ № {{ order.id }}</a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <table style="margin-left: 20px;">
+                <tr class="table_order_header">
+                    <th>№ заказа</th>
+                    <th>Статус</th>
+                    <th>Комментарий администратора</th>
+                    <th>Статус лог</th>
+                    <th>Привязанные счета</th>
+                    <th>Привязанные входящие посылки</th>
+                    <th>Привязанные исходящие посылки</th>
+                </tr>
+                <tr class="table_order_cells">
+                    <td>{{ order.id }}</td>
+                    <td>{{ order.status.description }}</td>
+                    <td>{{ order.admin_comment }}</td>
+                    <td class="order_info_log_cell"><img src="{% static 'img/list.png' %}" alt="Статус лог" class="order_info_log_img" /></td>
+                    <td class="order_info_log_cell"><img src="{% static 'img/list.png' %}" alt="Привязанные счета" class="order_info_log_img" /></td>
+                    <td class="order_info_log_cell"><img src="{% static 'img/list.png' %}" alt="Привязанные входящие посылки" class="order_info_log_img" /></td>
+                    <td class="order_info_log_cell"><img src="{% static 'img/list.png' %}" alt="Привязанные исходящие посылки" class="order_info_log_img" /></td>
+                </tr>
+            </table>
+        </div>
+        <div class="row">
+            <h2 style="padding-left: 15px;">Детали заказа</h2>
+        </div>
+        <div class="row">
+            <div class="order_info_details_key">
+                Итого сумма Вашего заказа
+            </div>
+            <div class="order_info_details_value">
+                {{ order.complex_price }}
+            </div>
+        </div>
+        <div class="row top-offset-20">
+            <div class="order_info_details_key">
+                Стоимость доставки
+            </div>
+            <div class="order_info_details_value">
+                {{ order.shipping_cost }}
+            </div>
+        </div>
+        <div class="row top-offset-5">
+            <div class="order_info_details_key">
+                Код скидки на наши услуги
+            </div>
+            <div class="order_info_details_value">
+                {{ order.coupon }}
+            </div>
+        </div>
+        <div class="row top-offset-5">
+            <div class="order_info_details_key">
+                Размер скидки на наши услуги
+            </div>
+            <div class="order_info_details_value">
+                {{ order.discount }}
+            </div>
+        </div>
+        <div class="row top-offset-5">
+            <div class="order_info_details_key">
+                Комментарий
+            </div>
+            <div class="order_info_details_value">
+                {{ order.user_comment }}
+            </div>
+        </div>
+        <div class="row top-offset-5">
+            <div class="order_info_details_key">
+                Текущий тариф
+            </div>
+            <div class="order_info_details_value">
+                {{ order.fee }}
+            </div>
+        </div>
+
+        <div class="row">
+            <h2 style="padding-left: 15px;">Товары:</h2>
+        </div>
+        <div class="row">
+            <table>
+                <tr class="table_product_header">
+                    <th>Магазин</th>
+                    <th>Ссылка на товар</th>
+                    <th>Артикул</th>
+                    <th>Название товара</th>
+                    <th>Цвет</th>
+                    <th>Размер</th>
+                    <th>Количество</th>
+                    <th>Цена</th>
+                    <th>Код скидки</th>
+                    <th>Сумма скидки</th>
+                    <th>Сумма</th>
+                    <th>Примечание</th>
+                </tr>
+                {% for product in products %}
+                <tr class="table_product_cells">
+                    <td><a href="{{ product.shop_link }}">{{ product.shop_link|truncatechars:14 }}</a></td>
+                    <td><a href="{{ product.product_link }}">{{ product.product_link|truncatechars:14 }}</a></td>
+                    <td>{{ product.vendor_code|truncatechars:14 }}</td>
+                    <td>{{ product.name|truncatechars:14 }}</td>
+                    <td>{{ product.color|truncatechars:14 }}</td>
+                    <td>{{ product.size|truncatechars:14 }}</td>
+                    <td>{{ product.quantity|truncatechars:14 }}</td>
+                    <td>{{ product.price|truncatechars:14 }}</td>
+                    <td>{{ product.discount_code|truncatechars:14 }}</td>
+                    <td>{{ product.discount_in_shop|truncatechars:14 }}</td>
+                    <td>{{ product.sum_price|truncatechars:14 }}</td>
+                    <td>{{ product.note|truncatechars:14 }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+{% endblock %}

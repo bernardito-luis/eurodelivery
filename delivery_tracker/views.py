@@ -14,7 +14,7 @@ from django.core.urlresolvers import reverse
 from django.http import (
     HttpResponseNotFound, HttpResponse, HttpResponseForbidden
 )
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 
 from delivery_tracker.forms import UserForm, ForgotPasswordForm, UserInfoForm
@@ -344,6 +344,18 @@ def my_orders(request, status):
     )
 
     return render(request, 'delivery_tracker/my_orders.html', context)
+
+
+def purchase_order(request, order_id):
+    order = get_object_or_404(PurchaseOrder, id=order_id)
+    if request.user != order.user:
+        return redirect('my_orders', status='active')
+    context = {
+        'order': order,
+        'products': order.product_set.order_by('id'),
+    }
+    return render(request, 'delivery_tracker/order_detail.html', context)
+
 
 @login_required
 def ajax_linked_shops(request):
