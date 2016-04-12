@@ -373,3 +373,61 @@ def ajax_linked_shops(request):
         result_html += "</ul>"
         return HttpResponse(result_html)
     return HttpResponseForbidden()
+
+
+@login_required
+def ajax_status_log(request):
+    if request.method == 'POST':
+        order_id = request.POST.get('order_id')
+        order = PurchaseOrder.objects.get(id=order_id)
+        if order.user != request.user:
+            return HttpResponseForbidden()
+        result_html = "<h2>Связанные магазины:</h2>"
+        result_html += "<ul>"
+        # for product in Product.objects.filter(purchase_order=order):
+        #     result_html += "<li>" + product.shop_link_trimmed + "</li>"
+        result_html += "</ul>"
+        return HttpResponse(result_html)
+    return HttpResponseForbidden()
+
+
+@login_required
+def ajax_linked_bills(request):
+    if request.method == 'POST':
+        order_id = request.POST.get('order_id')
+        order = PurchaseOrder.objects.get(id=order_id)
+        if order.user != request.user:
+            return HttpResponseForbidden()
+        result_html = "<h2>Связанные счета:</h2>"
+        result_html += "<ul>"
+        result_html += "</ul>"
+        return HttpResponse(result_html)
+    return HttpResponseForbidden()
+
+
+@login_required
+def ajax_linked_incoming_parcels(request):
+    if request.method == 'POST':
+        order_id = request.POST.get('order_id')
+        order = PurchaseOrder.objects.get(id=order_id)
+        if order.user != request.user:
+            return HttpResponseForbidden()
+        result_html = "<h2>Привязанные входящие посылки:</h2>"
+        result_html += "<ul>"
+        result_html += "</ul>"
+        return HttpResponse(result_html)
+    return HttpResponseForbidden()
+
+
+@login_required
+def ajax_linked_outcoming_parcels(request):
+    if request.method == 'POST':
+        order_id = request.POST.get('order_id')
+        order = PurchaseOrder.objects.get(id=order_id)
+        if order.user != request.user:
+            return HttpResponseForbidden()
+        result_html = "<h2>Привязанные исходящие посылки:</h2>"
+        result_html += "<ul>"
+        result_html += "</ul>"
+        return HttpResponse(result_html)
+    return HttpResponseForbidden()

@@ -2,6 +2,8 @@
 {% load staticfiles %}
 
 {% block content %}
+    <div id="id_shadow_all"></div>
+    <div id="id_popup_info"></div>
     <div class="container">
         <div class="row top-offset-20">
             <div class="col-md-offset-8 col-md-3">
@@ -38,10 +40,10 @@
                     <td>{{ order.id }}</td>
                     <td>{{ order.status.description }}</td>
                     <td>{{ order.admin_comment }}</td>
-                    <td class="order_info_log_cell"><img src="{% static 'img/list.png' %}" alt="Статус лог" class="order_info_log_img" /></td>
-                    <td class="order_info_log_cell"><img src="{% static 'img/list.png' %}" alt="Привязанные счета" class="order_info_log_img" /></td>
-                    <td class="order_info_log_cell"><img src="{% static 'img/list.png' %}" alt="Привязанные входящие посылки" class="order_info_log_img" /></td>
-                    <td class="order_info_log_cell"><img src="{% static 'img/list.png' %}" alt="Привязанные исходящие посылки" class="order_info_log_img" /></td>
+                    <td class="order_info_log_cell"><img id="id_status_log" src="{% static 'img/list.png' %}" alt="Статус лог" class="order_info_log_img" order-id="{{ order.id }}" /></td>
+                    <td class="order_info_log_cell"><img id="id_linked_bills" src="{% static 'img/list.png' %}" alt="Привязанные счета" class="order_info_log_img" order-id="{{ order.id }}" /></td>
+                    <td class="order_info_log_cell"><img id="id_linked_in_parcels" src="{% static 'img/list.png' %}" alt="Привязанные входящие посылки" class="order_info_log_img" order-id="{{ order.id }}" /></td>
+                    <td class="order_info_log_cell"><img id="id_linked_out_parcels" src="{% static 'img/list.png' %}" alt="Привязанные исходящие посылки" class="order_info_log_img" order-id="{{ order.id }}" /></td>
                 </tr>
             </table>
         </div>
@@ -135,4 +137,74 @@
             </table>
         </div>
     </div>
+{% endblock %}
+
+{% block script %}
+<script>
+    var html_close_button = '<button id="id_close_popup" type="button" class="btn btn-default">Закрыть</button>';
+    $("#id_status_log").click(function () {
+        $.post("{% url 'ajax_status_log' %}", {order_id: $(this).attr('order-id'), csrfmiddlewaretoken: "{{ csrf_token }}" })
+            .done(function (data) {
+                $("#id_popup_info").empty().append(data);
+                $("#id_popup_info").append(html_close_button);
+                $("#id_shadow_all").show();
+                $("#id_popup_info").show();
+
+                $("#id_close_popup").click(function () {
+                    $("#id_shadow_all").hide();
+                    $("#id_popup_info").hide();
+                });
+            }
+        );
+    });
+    $("#id_linked_bills").click(function () {
+        $.post("{% url 'ajax_linked_bills' %}", {order_id: $(this).attr('order-id'), csrfmiddlewaretoken: "{{ csrf_token }}" })
+            .done(function (data) {
+                $("#id_popup_info").empty().append(data);
+                $("#id_popup_info").append(html_close_button);
+                $("#id_shadow_all").show();
+                $("#id_popup_info").show();
+
+                $("#id_close_popup").click(function () {
+                    $("#id_shadow_all").hide();
+                    $("#id_popup_info").hide();
+                });
+            }
+        );
+    });
+    $("#id_linked_in_parcels").click(function () {
+        $.post("{% url 'ajax_linked_in_parcels' %}", {order_id: $(this).attr('order-id'), csrfmiddlewaretoken: "{{ csrf_token }}" })
+            .done(function (data) {
+                $("#id_popup_info").empty().append(data);
+                $("#id_popup_info").append(html_close_button);
+                $("#id_shadow_all").show();
+                $("#id_popup_info").show();
+
+                $("#id_close_popup").click(function () {
+                    $("#id_shadow_all").hide();
+                    $("#id_popup_info").hide();
+                });
+            }
+        );
+    });
+    $("#id_linked_out_parcels").click(function () {
+        $.post("{% url 'ajax_linked_out_parcels' %}", {order_id: $(this).attr('order-id'), csrfmiddlewaretoken: "{{ csrf_token }}" })
+            .done(function (data) {
+                $("#id_popup_info").empty().append(data);
+                $("#id_popup_info").append(html_close_button);
+                $("#id_shadow_all").show();
+                $("#id_popup_info").show();
+
+                $("#id_close_popup").click(function () {
+                    $("#id_shadow_all").hide();
+                    $("#id_popup_info").hide();
+                });
+            }
+        );
+    });
+    $("#id_shadow_all").click(function () {
+        $("#id_shadow_all").hide();
+        $("#id_popup_info").hide();
+    });
+</script>
 {% endblock %}

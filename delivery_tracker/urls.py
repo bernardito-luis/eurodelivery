@@ -30,6 +30,14 @@ urlpatterns = [
 
     url(r'^tracker/ajax/my_orders/get_linked_shops/$',
         views.ajax_linked_shops, name='ajax_linked_shops'),
+    url(r'^tracker/ajax/my_orders/get_status_log/$',
+        views.ajax_status_log, name='ajax_status_log'),
+    url(r'^tracker/ajax/my_orders/get_linked_bills/$',
+        views.ajax_linked_bills, name='ajax_linked_bills'),
+    url(r'^tracker/ajax/my_orders/get_linked_in_parcels/$',
+        views.ajax_linked_incoming_parcels, name='ajax_linked_in_parcels'),
+    url(r'^tracker/ajax/my_orders/get_linked_out_parcels/$',
+        views.ajax_linked_outcoming_parcels, name='ajax_linked_out_parcels'),
 ]
 
 
