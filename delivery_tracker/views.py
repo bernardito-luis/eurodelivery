@@ -346,9 +346,10 @@ def my_orders(request, status):
     return render(request, 'delivery_tracker/my_orders.html', context)
 
 
+@login_required
 def purchase_order(request, order_id):
     order = get_object_or_404(PurchaseOrder, id=order_id)
-    if request.user != order.user:
+    if request.user != order.user and not request.user.is_superuser:
         return redirect('my_orders', status='active')
     context = {
         'order': order,
