@@ -26,7 +26,7 @@
             </div>
         </div>
         <div class="row">
-            <table style="margin-left: 20px;">
+            <table class="info_table">
                 <tr class="table_order_header">
                     <th>№ заказа</th>
                     <th>Статус</th>
@@ -39,7 +39,7 @@
                 <tr class="table_order_cells">
                     <td>{{ order.id }}</td>
                     <td>{{ order.status.description }}</td>
-                    <td>{{ order.admin_comment }}</td>
+                    <td>{{ order.admin_comment|default:"&nbsp;" }}</td>
                     <td class="order_info_log_cell"><img id="id_status_log" src="{% static 'img/list.png' %}" alt="Статус лог" class="order_info_log_img" order-id="{{ order.id }}" /></td>
                     <td class="order_info_log_cell"><img id="id_linked_bills" src="{% static 'img/list.png' %}" alt="Привязанные счета" class="order_info_log_img" order-id="{{ order.id }}" /></td>
                     <td class="order_info_log_cell"><img id="id_linked_in_parcels" src="{% static 'img/list.png' %}" alt="Привязанные входящие посылки" class="order_info_log_img" order-id="{{ order.id }}" /></td>
@@ -71,7 +71,7 @@
                 Код скидки на наши услуги
             </div>
             <div class="order_info_details_value">
-                {{ order.coupon }}
+                {{ order.coupon|default:"&nbsp;" }}
             </div>
         </div>
         <div class="row top-offset-5">
@@ -87,7 +87,7 @@
                 Комментарий
             </div>
             <div class="order_info_details_value">
-                {{ order.user_comment }}
+                {{ order.user_comment|default:"&nbsp;" }}
             </div>
         </div>
         <div class="row top-offset-5">
@@ -103,7 +103,7 @@
             <h2 style="padding-left: 15px;">Товары:</h2>
         </div>
         <div class="row">
-            <table>
+            <table class="info_table">
                 <tr class="table_product_header">
                     <th>Магазин</th>
                     <th>Ссылка на товар</th>
