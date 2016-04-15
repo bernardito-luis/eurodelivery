@@ -29,6 +29,11 @@ PURCHASE_ORDER_STATUS = {
     'received_to_stock': 8,
     'deleted': 9,
 }
+ARCHIVE_STATUS = (
+    2,
+    8,
+)
+
 
 
 class PurchaseOrderStatus(models.Model):

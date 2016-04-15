@@ -102,7 +102,7 @@
     border-color: #BADA55;
     top: 50%;
     left: 50%;
-    height: 500px;
+    min-height: 500px;
     width: 390px;
     margin-top: -250px;
     margin-left: -225px;
@@ -220,4 +220,49 @@
     padding: 3px;
     height: 50px;
     border: 4px solid #A0A09F;
+}
+
+.archive_delete_button {
+    display: inline-flex;
+    background: #A0A09F;
+    height: 50px;
+    line-height: 50px;
+    border: 1px #7F7F7F solid;
+    width: 120px;
+    justify-content: center;
+    text-align: center;
+    vertical-align: middle;
+    margin-left: 12px;
+    color: white;
+    font-weight: bold;
+    //cursor: pointer;
+    text-decoration: none;
+
+}
+.archive_button:hover{
+    text-decoration: none;
+    color: white;
+}
+.archive_button:active {
+    text-decoration: none;
+    color: white;
+}
+.archive_button:visited {
+    text-decoration: none;
+    color: white;
+}
+.archive_restore_button {
+    display: inline-flex;
+    background: #A0A09F;
+    height: 50px;
+    line-height: 25px;
+    border: 1px #7F7F7F solid;
+    width: 120px;
+    justify-content: center;
+    text-align: center;
+    vertical-align: middle;
+    margin-left: 12px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
 }

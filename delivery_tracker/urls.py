@@ -28,6 +28,11 @@ urlpatterns = [
     url(r'^tracker/order/(?P<order_id>\w+)/details/$',
         views.purchase_order_detail, name='order'),
 
+    url(r'^tracker/order/(?P<order_id>\w+)/delete$',
+        views.purchase_order_delete, name='order_delete'),
+    url(r'^tracker/order/(?P<order_id>\w+)/restore$',
+        views.purchase_order_restore_as_draft, name='order_restore_as_draft'),
+
     url(r'^tracker/ajax/my_orders/get_linked_shops/$',
         views.ajax_linked_shops, name='ajax_linked_shops'),
     url(r'^tracker/ajax/my_orders/get_status_log/$',
@@ -39,6 +44,3 @@ urlpatterns = [
     url(r'^tracker/ajax/my_orders/get_linked_out_parcels/$',
         views.ajax_linked_outcoming_parcels, name='ajax_linked_out_parcels'),
 ]
-
-
-

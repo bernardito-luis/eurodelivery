@@ -22,7 +22,7 @@ from delivery_tracker.models import (
     UserRegistrationLink, PurchaseOrder, Product, PurchaseOrderStatus,
     StatusLog
 )
-from delivery_tracker.models import CURRENT_FEE, PURCHASE_ORDER_STATUS
+from delivery_tracker.models import CURRENT_FEE, PURCHASE_ORDER_STATUS, ARCHIVE_STATUS
 from delivery_tracker.utils import generate_password, generate_table_for_popup
 
 
@@ -360,6 +360,7 @@ def purchase_order_detail(request, order_id):
     context = {
         'order': order,
         'products': order.product_set.order_by('id'),
+        'archive': order.status_id in ARCHIVE_STATUS,
     }
     return render(request, 'delivery_tracker/order_detail.html', context)
 
@@ -442,3 +443,25 @@ def ajax_linked_outcoming_parcels(request):
         result_html += "</ul>"
         return HttpResponse(result_html)
     return HttpResponseForbidden()
+
+
+@login_required
+def purchase_order_delete(request, order_id):
+    order = PurchaseOrder.objects.get(id=order_id)
+    if order.user != request.user and not request.user.is_superuser:
+        return HttpResponseForbidden()
+
+    order.status_id = PURCHASE_ORDER_STATUS['deleted']
+    order.save()
+    return redirect('my_orders', status='active')
+
+
+@login_required
+def purchase_order_restore_as_draft(request, order_id):
+    order = PurchaseOrder.objects.get(id=order_id)
+    if order.user != request.user and not request.user.is_superuser:
+        return HttpResponseForbidden()
+
+    order.status_id = PURCHASE_ORDER_STATUS['draft']
+    order.save()
+    return redirect('my_orders', status='draft')

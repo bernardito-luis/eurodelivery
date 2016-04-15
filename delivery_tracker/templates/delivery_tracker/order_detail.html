@@ -48,6 +48,16 @@
             </table>
         </div>
         <div class="row">
+            {% if archive %}
+            <a href="{% url 'order_delete' order.id %}" class="archive_delete_button archive_button">
+                Удалить
+            </a>
+            <a href="{% url 'order_restore_as_draft' order.id %}" class="archive_restore_button archive_button">
+                Восстановить как черновик
+            </a>
+            {% endif %}
+        </div>
+        <div class="row">
             <h2 style="padding-left: 15px;">Детали заказа</h2>
         </div>
         <div class="row">
