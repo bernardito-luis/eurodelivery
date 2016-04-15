@@ -19,7 +19,9 @@ from django.template.loader import render_to_string
 
 from delivery_tracker.forms import UserForm, ForgotPasswordForm, UserInfoForm
 from delivery_tracker.models import (
-    UserRegistrationLink, PurchaseOrder, Product, PurchaseOrderStatus)
+    UserRegistrationLink, PurchaseOrder, Product, PurchaseOrderStatus,
+    StatusLog
+)
 from delivery_tracker.models import CURRENT_FEE, PURCHASE_ORDER_STATUS
 from delivery_tracker.utils import generate_password
 
@@ -265,6 +267,10 @@ def new_order(request):
                 discount=request.POST['discount'] or 0,
                 user_comment=request.POST.get('user_comment') or ''
             )
+            StatusLog.objects.create(
+                purchase_order=new_order,
+                status=new_status
+            )
 
             max_prod_num = int(request.POST['max_prod_num'])
             prod_count = 0
@@ -347,7 +353,7 @@ def my_orders(request, status):
 
 
 @login_required
-def purchase_order(request, order_id):
+def purchase_order_detail(request, order_id):
     order = get_object_or_404(PurchaseOrder, id=order_id)
     if request.user != order.user and not request.user.is_superuser:
         return redirect('my_orders', status='active')

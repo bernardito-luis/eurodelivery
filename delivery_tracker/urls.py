@@ -26,7 +26,7 @@ urlpatterns = [
     url(r'^tracker/my_orders/(?P<status>\w+)$',
         views.my_orders, name='my_orders'),
     url(r'^tracker/order/(?P<order_id>\w+)/details/$',
-        views.purchase_order, name='order'),
+        views.purchase_order_detail, name='order'),
 
     url(r'^tracker/ajax/my_orders/get_linked_shops/$',
         views.ajax_linked_shops, name='ajax_linked_shops'),

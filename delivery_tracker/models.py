@@ -27,6 +27,7 @@ PURCHASE_ORDER_STATUS = {
     'coming_to_storage': 6,
     'received_partially': 7,
     'received_to_stock': 8,
+    'deleted': 9,
 }
 
 
@@ -74,8 +75,14 @@ class PurchaseOrder(models.Model):
         db_table = 'purchase_order'
 
 
+class StatusLog(models.Model):
+    date_modified = models.DateTimeField(auto_now=True)
+    purchase_order = models.ForeignKey(PurchaseOrder)
+    status = models.ForeignKey(PurchaseOrderStatus)
+
+
 @receiver(pre_save)
-def notify_admin_and_user(sender, instance, *args, **kwargs):
+def order_pre_save(sender, instance, *args, **kwargs):
     if sender == PurchaseOrder:
         if not instance.id:
             # new order
@@ -100,7 +107,8 @@ def notify_admin_and_user(sender, instance, *args, **kwargs):
 
         new_status = instance.status
         try:
-            old_status = PurchaseOrder.objects.get(id=instance.id).status
+            order = PurchaseOrder.objects.get(id=instance.id)
+            old_status = order.status
             if old_status != new_status:
                 # send mail to admin
                 send_mail(
@@ -122,6 +130,10 @@ def notify_admin_and_user(sender, instance, *args, **kwargs):
                     settings.EMAIL_HOST_USER,
                     [instance.user.username, ],
                     fail_silently=False,
+                )
+                StatusLog.objects.create(
+                    purchase_order=order,
+                    status=new_status
                 )
         except PurchaseOrder.DoesNotExist:
                 # send mail to admin
