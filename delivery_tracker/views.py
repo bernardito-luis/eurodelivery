@@ -23,7 +23,7 @@ from delivery_tracker.models import (
     StatusLog
 )
 from delivery_tracker.models import CURRENT_FEE, PURCHASE_ORDER_STATUS
-from delivery_tracker.utils import generate_password
+from delivery_tracker.utils import generate_password, generate_table_for_popup
 
 
 logger = logging.getLogger(__name__)
@@ -386,13 +386,18 @@ def ajax_status_log(request):
     if request.method == 'POST':
         order_id = request.POST.get('order_id')
         order = PurchaseOrder.objects.get(id=order_id)
-        if order.user != request.user:
+        if order.user != request.user and not request.user.is_superuser:
             return HttpResponseForbidden()
-        result_html = "<h2>Связанные магазины:</h2>"
-        result_html += "<ul>"
-        # for product in Product.objects.filter(purchase_order=order):
-        #     result_html += "<li>" + product.shop_link_trimmed + "</li>"
-        result_html += "</ul>"
+        result_html = "<h2>Статус лог:</h2>"
+        status_log_data = order.statuslog_set.order_by(
+            'date_modified'
+        ).values_list(
+            'status__description', 'date_modified'
+        )
+        status_log_data = [
+            (row[0], row[1].strftime('%d.%m.%Y')) for row in status_log_data
+        ]
+        result_html += generate_table_for_popup([], status_log_data)
         return HttpResponse(result_html)
     return HttpResponseForbidden()
 
@@ -402,7 +407,7 @@ def ajax_linked_bills(request):
     if request.method == 'POST':
         order_id = request.POST.get('order_id')
         order = PurchaseOrder.objects.get(id=order_id)
-        if order.user != request.user:
+        if order.user != request.user and not request.user.is_superuser:
             return HttpResponseForbidden()
         result_html = "<h2>Связанные счета:</h2>"
         result_html += "<ul>"
