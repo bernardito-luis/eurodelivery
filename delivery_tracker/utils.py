@@ -14,14 +14,14 @@ def generate_password(length=8):
 
 
 def generate_table_for_popup(header, data):
-    table = '<table>'
+    table = '<table class="popup_table">'
     if header:
-        table += '<tr>'
+        table += '<tr class="popup_table_row">'
         for head_col_name in header:
             table += '<th>%s</th>' % (head_col_name,)
         table += '</tr>'
     for row in data:
-        table += '<tr>'
+        table += '<tr class="popup_table_row">'
         for col in row:
             table += '<td>%s</td>' % (col,)
         table += '</tr>'
