@@ -80,6 +80,16 @@ class StatusLog(models.Model):
     purchase_order = models.ForeignKey(PurchaseOrder)
     status = models.ForeignKey(PurchaseOrderStatus)
 
+    def __str__(self):
+        return '%s | Заказ #%d статус: %s' % (
+            self.date_modified.strftime('%Y-%m-%d %H:%M:%S'),
+            self.purchase_order_id,
+            self.status.description
+        )
+
+    class Meta:
+        db_table = 'status_log'
+
 
 @receiver(pre_save)
 def order_pre_save(sender, instance, *args, **kwargs):
