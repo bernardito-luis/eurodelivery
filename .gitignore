@@ -1,4 +1,5 @@
 __pycache__
+*.py[oc]
 .idea
 db.sqlite3
 local_settings.py
