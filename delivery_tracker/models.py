@@ -35,7 +35,6 @@ ARCHIVE_STATUS = (
 )
 
 
-
 class PurchaseOrderStatus(models.Model):
     # Table init
     # statuses = (

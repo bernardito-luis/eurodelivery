@@ -383,6 +383,28 @@ def ajax_linked_shops(request):
 
 
 @login_required
+def ajax_linked_products(request):
+    if request.method == 'POST':
+        order_id = request.POST.get('order_id')
+        order = PurchaseOrder.objects.get(id=order_id)
+        if order.user != request.user:
+            return HttpResponseForbidden()
+
+        result_html = "<h2>Связанные товары:</h2>"
+        products_data = order.product_set.order_by(
+            'id'
+        ).values_list(
+            'name', 'price', 'quantity'
+        )
+        result_html += generate_table_for_popup(
+            ['Имя', 'Стоимость', 'Количество'],
+            products_data
+        )
+        return HttpResponse(result_html)
+    return HttpResponseForbidden()
+
+
+@login_required
 def ajax_status_log(request):
     if request.method == 'POST':
         order_id = request.POST.get('order_id')

@@ -102,12 +102,13 @@
     border-color: #BADA55;
     top: 50%;
     left: 50%;
-    min-height: 500px;
+    height: 500px;
     width: 390px;
     margin-top: -250px;
     margin-left: -225px;
     display: none;
     position: fixed;
+    overflow-y: auto;
 }
 .validate_tips {
     border: 1px solid transparent;

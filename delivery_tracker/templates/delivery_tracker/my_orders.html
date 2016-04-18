@@ -74,15 +74,22 @@
                         <div class="col-md-1">{{ order.admin_comment|truncatechars:40 }}</div>
                         <div class="col-md-1">{{ order.product_qty }}</div>
                         <div class="col-md-1">{{ order.complex_price|truncatechars:40 }}</div>
-                        <div class="col-md-1"><button order-id="{{ order.id }}" type="button" name="profile_changes" class="btn btn-default shop_link">Список</button></div>
-                        <div class="col-md-1"><button id="id_product_link_for_{{ order.id }}" type="button" name="profile_changes" class="btn btn-default">Список</button></div>
+                        <div class="col-md-1"><button order-id="{{ order.id }}" type="button" name="profile_changes" class="btn btn-default ctrl_shop_link">Список</button></div>
+                        <div class="col-md-1"><button order-id="{{ order.id }}" id="id_product_link_for_{{ order.id }}" type="button" name="profile_changes" class="btn btn-default ctrl_product_link">Список</button></div>
                         <div class="col-md-1"><button id="id_bill_link_for_{{ order.id }}" type="button" name="profile_changes" class="btn btn-default">Список</button></div>
                         <div class="col-md-1"><button id="id_shipping_link_for_{{ order.id }}" type="button" name="profile_changes" class="btn btn-default">Список</button></div>
                         <div class="col-md-1"><button id="id_status_link_for_{{ order.id }}" type="button" name="profile_changes" class="btn btn-default">Список</button></div>
 
-                        <div class="col-md-offset-1 col-md-1">
-                            <button id="id_open_order_{{ order.id }}" type="button" name="profile_changes" class="btn btn-default">Открыть</button>
-                        </div>
+                        <!--<div class="col-md-offset-1 col-md-1">-->
+                            <!--<button id="id_open_order_{{ order.id }}" type="button" name="profile_changes" class="btn btn-default ctrl_order_open">Открыть</button>-->
+                        <!--</div>-->
+                        <a href="{% url 'order' order.id %}" class="open_order">Открыть</a>
+                        {% if active_tab == 'archive' %}
+                        <a href="{% url 'order_restore_as_draft' order.id %}" class="delete_product">Восстановить как черновик</a>
+                        {% endif %}
+                        {% if active_tab == 'draft' or active_tab == 'archive' %}
+                        <a href="{% url 'order_delete' order.id %}" class="delete_product">Удалить</a>
+                        {% endif %}
                     </div>
                 {% endfor %}
             </div>
@@ -94,8 +101,25 @@
 {% block script %}
 <script>
     var html_close_button = '<button id="id_close_popup" type="button" class="btn btn-default">Закрыть</button>';
-    $(".shop_link").click(function () {
+    $(".ctrl_shop_link").click(function () {
         $.post("{% url 'ajax_linked_shops' %}", {order_id: $(this).attr('order-id'), csrfmiddlewaretoken: "{{ csrf_token }}" })
+            .done(function (data) {
+                $("#id_popup_info").empty().append(data);
+                $("#id_popup_info").append(html_close_button);
+
+                $("#id_close_popup").click(function () {
+                    $("#id_shadow_all").hide();
+                    $("#id_popup_info").hide();
+                });
+            }
+        );
+
+        $("#id_shadow_all").show();
+        $("#id_popup_info").show();
+
+    });
+    $(".ctrl_product_link").click(function () {
+        $.post("{% url 'ajax_linked_products' %}", {order_id: $(this).attr('order-id'), csrfmiddlewaretoken: "{{ csrf_token }}" })
             .done(function (data) {
                 $("#id_popup_info").empty().append(data);
                 $("#id_popup_info").append(html_close_button);
