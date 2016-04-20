@@ -134,13 +134,77 @@
     background: #BADA55;
 }
 .delete_product {
+    display: inline-flex;
     position: absolute;
-    margin-left: 30px;
+    margin-left: 15px;
+    margin-top: 5px;
 }
 
 .info_table {
     margin-left: 10px;
     margin-right: 10px;
+}
+
+.order_new_details_key {
+    display: inline-block;
+    background: #92D050;
+    line-height: 40px;
+    border: 1px #7F7F7F solid;
+    width: 300px;
+    text-align: right;
+    padding-right: 10px;
+    color: white;
+    font-weight: bold;
+    margin-left: 14px;
+}
+.order_new_details_value {
+    display: inline-block;
+    line-height: 38px;
+    border: 1px #7F7F7F solid;
+    width: 848px;
+    text-align: left;
+    padding-left: 10px;
+    margin-left: -10px;
+    font-weight: bold;
+}
+.order_product_header {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.order_product_header_cell {
+    display: inline-flex;
+    background: #70AD47;
+    color: white;
+    //font-weight: bold;
+    padding: 2px;
+    height: 50px;
+    width: 92px;
+    border: 2px solid white;
+}
+.order_product_row {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.order_product_cell {
+    display: inline-flex;
+    background: #D5E3CF;
+    padding: 2px;
+    height: 50px;
+    width: 92px;
+    border: 2px solid white;
+}
+.order_new_product {
+    display: inline-block;
+    background: #A0A09F;
+    line-height: 40px;
+    border: 1px #7F7F7F solid;
+    width: 100px;
+    color: white;
+    padding-left: 3px;
+    padding-right: 3px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 14px;
 }
 
 .table_order_header > th {

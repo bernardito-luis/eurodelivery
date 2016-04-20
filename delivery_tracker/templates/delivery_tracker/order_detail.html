@@ -7,10 +7,10 @@
     <div class="container">
         <div class="row top-offset-20">
             <div class="col-md-offset-8 col-md-3">
-                <b>Welcome{% if user.first_name %}, {{ user.first_name }}{% endif %}!</b>
+                <b>Здравствуйте{% if user.first_name %}, {{ user.first_name }}{% endif %}!</b>
             </div>
             <div class="col-md-1">
-                <b><a href="{% url 'logout' %}">Logout</a></b>
+                <b><a href="{% url 'logout' %}">Выйти</a></b>
             </div>
         </div>
         <div class="row">

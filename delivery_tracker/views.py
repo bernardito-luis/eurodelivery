@@ -268,7 +268,7 @@ def new_order(request):
                 user_comment=request.POST.get('user_comment') or ''
             )
             StatusLog.objects.create(
-                purchase_order=new_order,
+                purchase_order=new_purchase_order,
                 status=new_status
             )
 

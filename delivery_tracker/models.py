@@ -118,6 +118,7 @@ def order_pre_save(sender, instance, *args, **kwargs):
                 [instance.user.username, ],
                 fail_silently=False,
             )
+            return
 
         new_status = instance.status
         try:
