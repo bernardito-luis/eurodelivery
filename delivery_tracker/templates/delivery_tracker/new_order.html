@@ -105,19 +105,10 @@
                         <label for="id_order_total" class="order_new_details_key">Итого сумма Вашего заказа:</label>
                         <input id="id_order_total" type="text" disabled value="" class="order_new_details_value" />
                     </div>
-                    <div class="row form-group">
-                        <div class="col-md-offset-2 col-md-1">
-                            <button type="submit" name="new_order" class="btn btn-default">Заказать</button>
-                        </div>
-                        <div class="col-md-2">
-                            <button type="submit" name="new_order_draft" class="btn btn-default">Сохранить как черновик</button>
-                        </div>
-                        <div class="col-md-2">
-                            <button type="submit" name="new_order_cancel" class="btn btn-default">Отмена</button>
-                        </div>
-                        <div class="col-md-2">
-                            <a id="id_save_draft" name="new_order_draft" class="order_new_product">Сохранить как черновик!!</a>
-                        </div>
+                    <div class="row" align="right" style="margin-right: 0px;">
+                        <button type="submit" name="new_order_draft" class="new_order_form_btn" style="width: 185px;">Сохранить как черновик</button>
+                        <button type="submit" name="new_order" class="new_order_form_btn">Заказать</button>
+                        <button type="submit" name="new_order_cancel" class="new_order_form_btn">Отмена</button>
                     </div>
                 </form>
             </div>

@@ -159,7 +159,7 @@
 }
 .order_new_details_value {
     display: inline-block;
-    line-height: 38px;
+    line-height: 39px;
     border: 1px #7F7F7F solid;
     width: 848px;
     text-align: left;
@@ -205,6 +205,32 @@
     font-weight: bold;
     cursor: pointer;
     margin-left: 14px;
+}
+.order_new_product:hover {
+    opacity: 0.9;
+}
+.new_order_form_btn {
+    border: none;
+    outline: none;
+    background: #A0A09F;
+    line-height: 40px;
+    border: 1px #7F7F7F solid;
+    width: 100px;
+    color: white;
+    padding-left: 3px;
+    padding-right: 3px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 14px;
+    min-width: 80px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    white-space: nowrap;
+    cursor: pointer;
+}
+.new_order_form_btn:hover{
+    opacity: 0.9;
 }
 
 .table_order_header > th {
