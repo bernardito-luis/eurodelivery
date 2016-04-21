@@ -58,8 +58,12 @@ class PurchaseOrder(models.Model):
     fee = models.FloatField(default=CURRENT_FEE)
     coupon = models.CharField(max_length=64, null=True, blank=True)
     discount = models.FloatField(default=0)
-    user_comment = models.CharField(max_length=255, null=True, blank=True)
-    admin_comment = models.CharField(max_length=255, null=True, blank=True)
+    user_comment = models.CharField(
+        max_length=255, null=True, blank=True, default=''
+    )
+    admin_comment = models.CharField(
+        max_length=255, null=True, blank=True, default=''
+    )
 
     @property
     def product_qty(self):

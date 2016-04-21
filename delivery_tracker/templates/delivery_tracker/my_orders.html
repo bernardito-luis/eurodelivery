@@ -33,7 +33,7 @@
                 </div>
             </div>
         </div>
-        <div class="row top-offset-20 link_hover_disabled">
+        <div class="row top-offset-20 link_hover_with_color_disabled">
             <a href="{% url 'my_orders' 'active' %}" class="col-md-offset-1 col-md-3 top_tab {% if active_tab == 'active' %} top_tab_active {% endif %}">
                 <h1>Активные</h1>
             </a>
@@ -53,47 +53,84 @@
             </div>
         </div>
 
-        <div class="row top-offset-20 bot-offset-20">
-            <div class="col-md-1">№ заказа</div>
-            <div class="col-md-1">Статус</div>
-            <div class="col-md-1">Комментарий администра-тора</div>
-            <div class="col-md-1">Количество позиций</div>
-            <div class="col-md-1">Стоимость</div>
-            <div class="col-md-1">Связанные магазины</div>
-            <div class="col-md-1">Товары</div>
-            <div class="col-md-1">Привязанные счета</div>
-            <div class="col-md-1">Привязанные посылки</div>
-            <div class="col-md-1">Статус лог</div>
-        </div>
-        <div class="row">
-            <div id="id_order_list">
-                {% for order in orders %}
-                    <div class="row top-offset-5">
-                        <div class="col-md-1">{{ order.id }}</div>
-                        <div class="col-md-1">{{ order.status.description }}</div>
-                        <div class="col-md-1">{{ order.admin_comment|truncatechars:40 }}</div>
-                        <div class="col-md-1">{{ order.product_qty }}</div>
-                        <div class="col-md-1">{{ order.complex_price|truncatechars:40 }}</div>
-                        <div class="col-md-1"><button order-id="{{ order.id }}" type="button" name="profile_changes" class="btn btn-default ctrl_shop_link">Список</button></div>
-                        <div class="col-md-1"><button order-id="{{ order.id }}" id="id_product_link_for_{{ order.id }}" type="button" name="profile_changes" class="btn btn-default ctrl_product_link">Список</button></div>
-                        <div class="col-md-1"><button id="id_bill_link_for_{{ order.id }}" type="button" name="profile_changes" class="btn btn-default">Список</button></div>
-                        <div class="col-md-1"><button id="id_shipping_link_for_{{ order.id }}" type="button" name="profile_changes" class="btn btn-default">Список</button></div>
-                        <div class="col-md-1"><button id="id_status_link_for_{{ order.id }}" type="button" name="profile_changes" class="btn btn-default">Список</button></div>
-
-                        <!--<div class="col-md-offset-1 col-md-1">-->
-                            <!--<button id="id_open_order_{{ order.id }}" type="button" name="profile_changes" class="btn btn-default ctrl_order_open">Открыть</button>-->
-                        <!--</div>-->
-                        <a href="{% url 'order' order.id %}" class="open_order">Открыть</a>
-                        {% if active_tab == 'archive' %}
-                        <a href="{% url 'order_restore_as_draft' order.id %}" class="delete_product">Восстановить как черновик</a>
-                        {% endif %}
-                        {% if active_tab == 'draft' or active_tab == 'archive' %}
-                        <a href="{% url 'order_delete' order.id %}" class="delete_product">Удалить</a>
-                        {% endif %}
-                    </div>
-                {% endfor %}
+        <div class="row top-offset-20">
+            <div class="order_header">
+                <div class="order_header_cell">№ заказа</div>
+                <div class="order_header_cell">Статус</div>
+                <div class="order_header_cell">Комментарий администра-тора</div>
+                <div class="order_header_cell">Количество позиций</div>
+                <div class="order_header_cell">Стоимость</div>
+                <div class="order_header_cell">Связанные магазины</div>
+                <div class="order_header_cell">Товары</div>
+                <div class="order_header_cell">Привязанные счета</div>
+                <div class="order_header_cell">Привязанные посылки</div>
+                <div class="order_header_cell">Статус лог</div>
             </div>
         </div>
+        {% for order in orders %}
+        <div class="row">
+            <div class="order_row" style="display:flex; float:left;">
+                <div class="order_cell">{{ order.id }}</div>
+                <div class="order_cell">{{ order.status.description }}</div>
+                <div class="order_cell">{{ order.admin_comment|truncatechars:30 }}</div>
+                <div class="order_cell">{{ order.product_qty }}</div>
+                <div class="order_cell">{{ order.complex_price|truncatechars:30 }}</div>
+                <div class="order_cell"><img src="{% static 'img/list.png' %}" alt="Связанные магазины" class="order_info_log_img ctrl_shop_link" order-id="{{ order.id }}" /></div>
+                <div class="order_cell"><img src="{% static 'img/list.png' %}" alt="Товары" class="order_info_log_img ctrl_product_link" order-id="{{ order.id }}" /></div>
+                <div class="order_cell"><img src="{% static 'img/list.png' %}" alt="Привязанные счета" class="order_info_log_img" order-id="{{ order.id }}" /></div>
+                <div class="order_cell"><img src="{% static 'img/list.png' %}" alt="Привязанные посылки" class="order_info_log_img" order-id="{{ order.id }}" /></div>
+                <div class="order_cell"><img src="{% static 'img/list.png' %}" alt="Статус лог" class="order_info_log_img ctrl_status_log" order-id="{{ order.id }}" /></div>
+
+                <a href="{% url 'order' order.id %}" class="open_order">Открыть</a>
+                {% if active_tab == 'archive' %}
+                <a href="{% url 'order_restore_as_draft' order.id %}" class="restore_as_draft">Восстановить как черновик</a>
+                {% endif %}
+                {% if active_tab == 'draft' or active_tab == 'archive' %}
+                <a href="{% url 'order_delete' order.id %}" class="delete_order">Удалить</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+        <!--<div class="row top-offset-20 bot-offset-20">-->
+            <!--<table class="info_table">-->
+                <!--<tr class="table_order_header">-->
+                    <!--<th>№ заказа</th>-->
+                    <!--<th>Статус</th>-->
+                    <!--<th>Комментарий администра-тора</th>-->
+                    <!--<th>Количество позиций</th>-->
+                    <!--<th>Стоимость</th>-->
+                    <!--<th>Связанные магазины</th>-->
+                    <!--<th>Товары</th>-->
+                    <!--<th>Привязанные счета</th>-->
+                    <!--<th>Привязанные посылки</th>-->
+                    <!--<th>Статус лог</th>-->
+                <!--</tr>-->
+                <!--{% for order in orders %}-->
+                <!--<tr class="table_order_cells">-->
+                    <!--<td>{{ order.id }}</td>-->
+                    <!--<td>{{ order.status.description }}</td>-->
+                    <!--<td>{{ order.admin_comment|truncatechars:40 }}</td>-->
+                    <!--<td>{{ order.product_qty }}</td>-->
+                    <!--<td>{{ order.complex_price|truncatechars:40 }}</td>-->
+                    <!--<td class="order_info_log_cell"><img src="{% static 'img/list.png' %}" alt="Связанные магазины" class="order_info_log_img ctrl_shop_link" order-id="{{ order.id }}" /></td>-->
+                    <!--<td class="order_info_log_cell"><img src="{% static 'img/list.png' %}" alt="Товары" class="order_info_log_img ctrl_product_link" order-id="{{ order.id }}" /></td>-->
+                    <!--<td class="order_info_log_cell"><img src="{% static 'img/list.png' %}" alt="Привязанные счета" class="order_info_log_img" order-id="{{ order.id }}" /></td>-->
+                    <!--<td class="order_info_log_cell"><img src="{% static 'img/list.png' %}" alt="Привязанные посылки" class="order_info_log_img" order-id="{{ order.id }}" /></td>-->
+                    <!--<td class="order_info_log_cell"><img src="{% static 'img/list.png' %}" alt="Статус лог" class="order_info_log_img ctrl_status_log" order-id="{{ order.id }}" /></td>-->
+                    <!--&lt;!&ndash;<td>zz</td>&ndash;&gt;-->
+
+                    <!--<a href="{% url 'order' order.id %}" class="open_order">Открыть</a>-->
+                    <!--{% if active_tab == 'archive' %}-->
+                    <!--<a href="{% url 'order_restore_as_draft' order.id %}" class="delete_product">Восстановить как черновик</a>-->
+                    <!--{% endif %}-->
+                    <!--{% if active_tab == 'draft' or active_tab == 'archive' %}-->
+                    <!--<a href="{% url 'order_delete' order.id %}" class="delete_product">Удалить</a>-->
+                    <!--{% endif %}-->
+
+                <!--</tr>-->
+                <!--{% endfor %}-->
+            <!--</table>-->
+        <!--</div>-->
     </div>
 
 {% endblock %}
@@ -134,6 +171,21 @@
         $("#id_shadow_all").show();
         $("#id_popup_info").show();
 
+    });
+    $(".ctrl_status_log").click(function () {
+        $.post("{% url 'ajax_status_log' %}", {order_id: $(this).attr('order-id'), csrfmiddlewaretoken: "{{ csrf_token }}" })
+            .done(function (data) {
+                $("#id_popup_info").empty().append(data);
+                $("#id_popup_info").append(html_close_button);
+                $("#id_shadow_all").show();
+                $("#id_popup_info").show();
+
+                $("#id_close_popup").click(function () {
+                    $("#id_shadow_all").hide();
+                    $("#id_popup_info").hide();
+                });
+            }
+        );
     });
     $("#id_shadow_all").click(function () {
         $("#id_shadow_all").hide();

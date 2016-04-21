@@ -93,8 +93,8 @@
                             <input id="id_discount_in_shop_1" type="text" name="discount_in_shop_1" value="0" class="order_product_cell ctrl_calc_sum" />
                             <input id="id_sum_1" type="text" name="sum_1" disabled class="order_product_cell ctrl_product_sum" />
                             <input id="id_note_1" type="text" name="note_1" class="order_product_cell" />
+                            <div id="id_delete_product_1" class="new_order_delete_product ctrl_delete_product">Удалить</div>
                         </div>
-                        <button id="id_delete_product_1" type="button" class="btn btn-default delete_product">X</button>
                     </div>
                     </div>
                     <div class="row top-offset-5">
@@ -160,7 +160,7 @@
         $('#id_product_row_'+product_id).remove();
         calc_total_sum();
     }
-    $(".delete_product").click(delete_product);
+    $(".ctrl_delete_product").click(delete_product);
 
     function calc_total_sum() {
         var total_sum = 0;
@@ -206,15 +206,15 @@
                     <input id="id_discount_in_shop_(product_num)" type="text" name="discount_in_shop_(product_num)" value="0" class="order_product_cell ctrl_calc_sum" />
                     <input id="id_sum_(product_num)" type="text" name="sum_(product_num)" disabled readonly="1" class="order_product_cell ctrl_product_sum" />
                     <input id="id_note_(product_num)" type="text" name="note_(product_num)" class="order_product_cell" />
+                    <div id="id_delete_product_(product_num)" class="new_order_delete_product ctrl_delete_product">Удалить</div>
                 </div>
-                <button id="id_delete_product_(product_num)" type="button" class="btn btn-default delete_product">X</button>
             </div>
         `;
         new_product = new_product.replace(/\(product_num\)/g, current_prod_qty);
         $("#id_product_list").append(new_product);
 
         $(".ctrl_calc_sum").on('input', calc_sum);
-        $(".delete_product").click(delete_product);
+        $(".ctrl_delete_product").click(delete_product);
 
     });
 
