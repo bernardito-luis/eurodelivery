@@ -263,15 +263,21 @@ def new_order(request):
 
             format_correct = True
             for i in range(1, max_prod_num+1):
+                try:
+                    prod_link = request.POST['product_link_%d' % (i, )]
+                except KeyError:
+                    continue
                 if request.POST.get('quantity_%d' % (i,)):
                     try:
                         foo = int(request.POST.get('quantity_%d' % (i,)))
                     except ValueError:
                         format_correct = False
+                if request.POST.get('price_%d' % (i,)):
                     try:
                         foo = float(request.POST.get('price_%d' % (i,)))
                     except ValueError:
                         format_correct = False
+                if request.POST.get('discount_in_shop_%d' % (i,)):
                     try:
                         foo = float(
                             request.POST.get('discount_in_shop_%d' % (i,))
@@ -397,8 +403,14 @@ def order_from_draft(request):
     context = dict()
     context['current_fee'] = CURRENT_FEE
     if request.method == 'POST':
+        # hack!
+        order_id = request.POST.get('order_id', 0)
+        old_order = get_object_or_404(PurchaseOrder, id=order_id)
+        if request.user != old_order.user and not request.user.is_superuser:
+            return redirect('my_orders', status='active')
+
         if 'new_order_cancel' in request.POST:
-            return redirect('cabinet')
+            return redirect('order', order_id)
         elif 'new_order' in request.POST or 'new_order_draft' in request.POST:
             if 'new_order' in request.POST:
                 new_status = PurchaseOrderStatus.objects.get(
@@ -408,39 +420,103 @@ def order_from_draft(request):
                 new_status = PurchaseOrderStatus.objects.get(
                     id=PURCHASE_ORDER_STATUS['draft']
                 )
-            new_purchase_order = PurchaseOrder.objects.create(
-                user=request.user,
-                status=new_status,
-                shipping_cost=request.POST['shipping_cost'] or 0,
-                coupon=request.POST.get('coupon') or '',
-                discount=request.POST['discount'] or 0,
-                user_comment=request.POST.get('user_comment') or ''
-            )
-            StatusLog.objects.create(
-                purchase_order=new_purchase_order,
-                status=new_status
-            )
+            new_purchase_order = old_order
+
+            # delete all linked products
+            Product.objects.filter(
+                id__in=new_purchase_order.product_set.values_list(
+                    'id', flat=True)
+            ).delete()
 
             max_prod_num = int(request.POST['max_prod_num'])
+
+            format_correct = True
+            for i in range(1, max_prod_num+1):
+                try:
+                    prod_link = request.POST['product_link_%d' % (i, )]
+                except KeyError:
+                    continue
+                if request.POST.get('quantity_%d' % (i,)):
+                    try:
+                        foo = int(request.POST.get('quantity_%d' % (i,)))
+                    except ValueError:
+                        format_correct = False
+                if request.POST.get('price_%d' % (i,)):
+                    try:
+                        foo = float(request.POST.get('price_%d' % (i,)))
+                    except ValueError:
+                        format_correct = False
+                if request.POST.get('discount_in_shop_%d' % (i,)):
+                    try:
+                        foo = float(
+                            request.POST.get('discount_in_shop_%d' % (i,))
+                        )
+                    except ValueError:
+                        format_correct = False
+                if not format_correct:
+                    messages.add_message(
+                        request,
+                        messages.INFO,
+                        'Количества, цена или сумма скидки товара имеют '
+                        'некорректное значение. (Должно быть число)'
+                    )
+                    break
+            # check for obligatory fields
+            if 'new_order' in request.POST:
+                shipping_cost = request.POST['shipping_cost']
+                discount = request.POST['discount']
+                obligatory_filled = True
+                obligatory_product_filled = True
+                if not shipping_cost or not discount:
+                    messages.add_message(
+                        request,
+                        messages.INFO,
+                        'Не заполнены обязательные поля у заказа!'
+                    )
+                    obligatory_filled = False
+
+                for i in range(1, max_prod_num+1):
+                    try:
+                        prod_link = request.POST['product_link_%d' % (i, )]
+                    except KeyError:
+                        continue
+                    if (not obligatory_product_filled and (
+                            not request.POST.get('product_link_%d' % (i, )) or
+                            not request.POST.get('color_%d' % (i, )) or
+                            not request.POST.get('size_%d' % (i, )) or
+                            not request.POST.get('quantity_%d' % (i, )) or
+                            not request.POST.get('price_%d' % (i, )) or
+                            request.POST.get('discount_in_shop_%d' % (i, )) is None
+                    )):
+                        messages.add_message(
+                            request,
+                            messages.INFO,
+                            'Не заполнены обязательные поля у товаров!'
+                        )
+                        obligatory_product_filled = False
+
+                if not obligatory_filled or not obligatory_product_filled:
+                    return redirect('order', order_id)
+            if not format_correct:
+                return redirect('order', order_id)
+
+            new_purchase_order.shipping_cost = (
+                request.POST['shipping_cost'] or 0
+            )
+            new_purchase_order.coupon = request.POST.get('coupon') or ''
+            new_purchase_order.discount = request.POST['discount'] or 0
+            new_purchase_order.user_comment = (
+                request.POST.get('user_comment') or ''
+            )
+            new_purchase_order.status = new_status
+            new_purchase_order.save()
+
             prod_count = 0
             for i in range(1, max_prod_num+1):
                 try:
                     prod_link = request.POST['product_link_%d' % (i, )]
                 except KeyError:
                     continue
-                if (not request.POST.get('product_link_%d' % (i, )) or
-                        not request.POST.get('color_%d' % (i, )) or
-                        not request.POST.get('size_%d' % (i, )) or
-                        not request.POST.get('quantity_%d' % (i, )) or
-                        not request.POST.get('price_%d' % (i, )) or
-                        request.POST.get('discount_in_shop_%d' % (i, )) is None
-                    ):
-                    messages.add_message(
-                        request,
-                        messages.INFO,
-                        'Не заполнены обязательные поля у товаров!'
-                    )
-                    return redirect('new_order')
                 try:
                     Product.objects.create(
                         purchase_order=new_purchase_order,
@@ -451,8 +527,8 @@ def order_from_draft(request):
                         name=request.POST.get('name_%d' % (i, )),
                         color=request.POST['color_%d' % (i, )],
                         size=request.POST['size_%d' % (i, )],
-                        quantity=request.POST['quantity_%d' % (i, )],
-                        price=request.POST['price_%d' % (i, )],
+                        quantity=request.POST['quantity_%d' % (i, )] or 0,
+                        price=request.POST['price_%d' % (i, )] or 0,
                         discount_code=request.POST.get('discount_code_%d' % (i, )),
                         discount_in_shop=request.POST['discount_in_shop_%d' % (i, )],
                         note=request.POST.get('note_%d' % (i, ))
@@ -461,6 +537,26 @@ def order_from_draft(request):
 
                 except KeyError as e:
                     continue
+            # # send mail to admin
+            # send_mail(
+            #     'Новый заказ',
+            #     'Пользователь %s оформил новый заказ №%d' % (
+            #         new_purchase_order.user.username, new_purchase_order.id
+            #     ),
+            #     settings.EMAIL_HOST_USER,
+            #     [User.objects.get(id=1).email, ],
+            #     fail_silently=False,
+            # )
+            # # send mail to user
+            # send_mail(
+            #     'Новый заказ',
+            #     'Позравляем! Вы оформили заказ! Его номер №%d' % (
+            #         new_purchase_order.id
+            #     ),
+            #     settings.EMAIL_HOST_USER,
+            #     [new_purchase_order.user.username, ],
+            #     fail_silently=False,
+            # )
             logger.info(
                 'Saved order id: %d with %d products' %
                 (new_purchase_order.id, prod_count)

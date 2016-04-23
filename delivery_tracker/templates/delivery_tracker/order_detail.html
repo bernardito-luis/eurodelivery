@@ -25,6 +25,14 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-offset-4 col-sm-offset-4 col-md-4 col-sm-4">
+                {% for msg in messages %}
+                    <b>{{ msg }}</b><br/>
+                {% endfor %}
+
+            </div>
+        </div>
         {% if not draft %}
         <div class="row">
             <table class="info_table">
@@ -206,6 +214,7 @@
                         <label for="id_current_fee" class="order_new_details_key">Текущий тариф</label>
                         <input id="id_current_fee" type="text" name="current_fee" value="{{ order.fee }}" disabled="1" class="order_new_details_value" />
                     </div>
+                    <input id="id_order_identificator" name="order_id" type="hidden" value="{{ order.id }}" />
                     <input id="id_max_prod_num" name="max_prod_num" type="hidden" value="1" />
 
                     <div class="row">
@@ -335,6 +344,7 @@
     });
 
     var current_prod_qty = {{ products|length }};
+    $("#id_max_prod_num").attr('value', current_prod_qty);
 
     function calc_sum() {
         var product_id = this.id.substring(this.id.lastIndexOf("_")+1);
