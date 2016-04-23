@@ -25,6 +25,7 @@
                 </div>
             </div>
         </div>
+        {% if not draft %}
         <div class="row">
             <table class="info_table">
                 <tr class="table_order_header">
@@ -146,6 +147,122 @@
                 {% endfor %}
             </table>
         </div>
+        {% else %}
+        <div class="row">
+            <table class="info_table" style="display: inline-flex;">
+                <tr class="table_order_header">
+                    <th>№ заказа</th>
+                    <th>Статус</th>
+                    <th>Комментарий администратора</th>
+                    <th>Статус лог</th>
+                </tr>
+                <tr class="table_order_cells">
+                    <td>{{ order.id }}</td>
+                    <td>{{ order.status.description }}</td>
+                    <td>{{ order.admin_comment|default:"&nbsp;" }}</td>
+                    <td class="order_info_log_cell"><img id="id_status_log" src="{% static 'img/list.png' %}" alt="Статус лог" class="order_info_log_img" order-id="{{ order.id }}" /></td>
+                </tr>
+            </table>
+            <div id="id_order_from_draft" class="draft_order_button draft_control_button">
+                Заказать
+            </div>
+            <div id="id_save_as_draft" class="draft_save_button draft_control_button">
+                Сохранить как черновик
+            </div>
+            <a href="{% url 'order_cancel' order.id %}" class="draft_delete_button draft_control_button">
+                Удалить
+            </a>
+            <a href="{% url 'order' order.id %}" class="draft_cancel_button draft_control_button">
+                Отмена
+            </a>
+        </div>
+        <div class="row top-offset-20">
+            <div class="col-md-12">
+                <form id="id_order_form" action="{% url 'order_from_draft' %}" method="post" class="form-horizontal">
+                    {% csrf_token %}
+
+                    {{ form.shipping_cost.errors }}
+                    <div class="form-group">
+                        <label for="id_shipping_cost" class="order_new_details_key">Стоимость доставки*</label>
+                        <input id="id_shipping_cost" type="text" name="shipping_cost" value="{{ order.shipping_cost }}" class="ctrl_calc_total_sum order_new_details_value" />
+                    </div>
+                    {{ form.coupon.errors }}
+                    <div class="form-group">
+                        <label for="id_coupon" class="order_new_details_key">Код скидки на наши услуги</label>
+                        <input id="id_coupon" type="text" name="coupon" value="{{ order.coupon }}" class="order_new_details_value" />
+                    </div>
+                    {{ form.discount.errors }}
+                    <div class="form-group">
+                        <label for="id_discount" class="order_new_details_key">Размер скидки на наши услуги*</label>
+                        <input id="id_discount" type="text" name="discount" value="{{ order.discount }}" class="order_new_details_value ctrl_calc_total_sum" />
+                    </div>
+                    {{ form.user_comment.errors }}
+                    <div class="form-group">
+                        <label for="id_user_comment" class="order_new_details_key">Комментарий</label>
+                        <input id="id_user_comment" type="text" name="user_comment" value="{{ order.user_comment }}" class="order_new_details_value" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_current_fee" class="order_new_details_key">Текущий тариф</label>
+                        <input id="id_current_fee" type="text" name="current_fee" value="{{ order.fee }}" disabled="1" class="order_new_details_value" />
+                    </div>
+                    <input id="id_max_prod_num" name="max_prod_num" type="hidden" value="1" />
+
+                    <div class="row">
+                        <div class="order_product_header">
+                            <div class="order_product_header_cell">Магазин</div>
+                            <div class="order_product_header_cell">Ссылка на товар*</div>
+                            <div class="order_product_header_cell">Артикул</div>
+                            <div class="order_product_header_cell">Название товара</div>
+                            <div class="order_product_header_cell">Цвет*</div>
+                            <div class="order_product_header_cell">Размер*</div>
+                            <div class="order_product_header_cell">Количество*</div>
+                            <div class="order_product_header_cell">Цена*</div>
+                            <div class="order_product_header_cell">Код скидки</div>
+                            <div class="order_product_header_cell">Сумма скидки*</div>
+                            <div class="order_product_header_cell">Сумма*</div>
+                            <div class="order_product_header_cell">Примечание</div>
+                        </div>
+                    </div>
+                    <div id="id_product_list">
+                    {% for product in products %}
+                    <div id="id_product_row_{{ forloop.counter }}" class="row">
+                        <div class="order_product_row" style="float:left;">
+                            <input id="id_shop_link_{{ forloop.counter }}" type="text" name="shop_link_{{ forloop.counter }}" value="{{ product.shop_link }}" class="order_product_cell" />
+                            <input id="id_product_link_{{ forloop.counter }}" type="text" name="product_link_{{ forloop.counter }}" value="{{ product.product_link }}" class="order_product_cell" />
+                            <input id="id_vendor_code_{{ forloop.counter }}" type="text" name="vendor_code_{{ forloop.counter }}" value="{{ product.vendor_code }}" class="order_product_cell" />
+                            <input id="id_name_{{ forloop.counter }}" type="text" name="name_{{ forloop.counter }}" value="{{ product.name }}" class="order_product_cell" />
+                            <input id="id_color_{{ forloop.counter }}" type="text" name="color_{{ forloop.counter }}" value="{{ product.color }}" class="order_product_cell" />
+                            <input id="id_size_{{ forloop.counter }}" type="text" name="size_{{ forloop.counter }}" value="{{ product.size }}" class="order_product_cell" />
+                            <input id="id_quantity_{{ forloop.counter }}" type="text" name="quantity_{{ forloop.counter }}" value="{{ product.quantity }}" class="order_product_cell ctrl_calc_sum" />
+                            <input id="id_price_{{ forloop.counter }}" type="text" name="price_{{ forloop.counter }}" value="{{ product.price }}" class="order_product_cell ctrl_calc_sum" />
+                            <input id="id_discount_code_{{ forloop.counter }}" type="text" name="discount_code_{{ forloop.counter }}" value="{{ product.discount_code }}" class="order_product_cell" />
+                            <input id="id_discount_in_shop_{{ forloop.counter }}" type="text" name="discount_in_shop_{{ forloop.counter }}" value="{{ product.discount_in_shop }}" class="order_product_cell ctrl_calc_sum" />
+                            <input id="id_sum_{{ forloop.counter }}" type="text" name="sum_{{ forloop.counter }}" disabled value="{{ product.sum_price }}" class="order_product_cell ctrl_product_sum" />
+                            <input id="id_note_{{ forloop.counter }}" type="text" name="note_{{ forloop.counter }}" value="{{ product.note }}" class="order_product_cell" />
+                            <div id="id_delete_product_{{ forloop.counter }}" class="new_order_delete_product ctrl_delete_product">Удалить</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    </div>
+                    <div class="row top-offset-5">
+                        <div id="id_add_product" class="order_new_product">+ Добавить</div>
+                    </div>
+
+                    <div class="form-group top-offset-20">
+                        <label for="id_order_total" class="order_new_details_key">Итого сумма Вашего заказа:</label>
+                        <input id="id_order_total" type="text" disabled value={{ order.complex_price }} class="order_new_details_value" />
+                    </div>
+                    <div class="row" align="right" style="margin-right: 0px;">
+                        <button id="id_hidden_save_as_draft" type="submit" name="new_order_draft" class="new_order_form_btn" style="width: 185px; display: none;">Сохранить как черновик</button>
+                        <button id="id_hidden_order" type="submit" name="new_order" class="new_order_form_btn" style="display: none;">Заказать</button>
+                        <button type="submit" name="new_order_cancel" class="new_order_form_btn" style="display: none;">Отмена</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+        {% endif %}
     </div>
 {% endblock %}
 
@@ -216,5 +333,111 @@
         $("#id_shadow_all").hide();
         $("#id_popup_info").hide();
     });
+
+    var current_prod_qty = {{ products|length }};
+
+    function calc_sum() {
+        var product_id = this.id.substring(this.id.lastIndexOf("_")+1);
+        var qty_id = '#id_quantity_' + product_id;
+        var price_id = '#id_price_' + product_id;
+        var discount_in_shop_id = '#id_discount_in_shop_' + product_id;
+        var sum_id = '#id_sum_' + product_id;
+        if ($(qty_id).val() !== undefined && $(qty_id).val() !== '' &&
+                $(price_id).val() !== undefined && $(price_id).val() !== '' &&
+                $(discount_in_shop_id).val() !== undefined && $(discount_in_shop_id).val() !== ''
+            ) {
+            var qty = parseFloat($(qty_id).val(), 10);
+            var price = parseFloat($(price_id).val(), 10);
+            var discount_in_shop = parseFloat($(discount_in_shop_id).val(), 10);
+            if (!isNaN(qty) && !isNaN(price) && !isNaN(discount_in_shop)) {
+                var sum = qty*price - discount_in_shop;
+                if (sum > 0) {
+                    $(sum_id).attr('value', sum);
+                    calc_total_sum();
+                } else {
+                    $(sum_id).attr('value', 0);
+                }
+            }
+            else {
+                $(sum_id).attr('value', '');
+            }
+        }
+        else {
+            $(sum_id).attr('value', '');
+        }
+    }
+    $(".ctrl_calc_sum").on('input', calc_sum);
+    $(".ctrl_calc_total_sum").on('input', calc_total_sum);
+
+    function delete_product() {
+        var product_id = this.id.substring(this.id.lastIndexOf("_")+1);
+        $('#id_product_row_'+product_id).remove();
+        calc_total_sum();
+    }
+    $(".ctrl_delete_product").click(delete_product);
+
+    function calc_total_sum() {
+        var total_sum = 0;
+        $(".ctrl_product_sum").each(function () {
+            if (!isNaN($(this).val()) && $(this).val() !== '') {
+                total_sum += parseFloat($(this).val(), 10);
+            }
+        });
+        var shipping_cost = parseFloat($('#id_shipping_cost').val(), 10);
+        if ($('#id_shipping_cost').val() !== '' && !isNaN(shipping_cost)) {
+            total_sum += shipping_cost;
+        }
+        var discount = parseFloat($('#id_discount').val(), 10);
+        if ($('#id_discount').val() !== '' && !isNaN(discount)) {
+            total_sum -= discount;
+        }
+
+        var current_fee = parseFloat($('#id_current_fee').val(), 10);
+        if ($('#id_current_fee').val() !== '' && !isNaN(current_fee)) {
+            total_sum += current_fee;
+        }
+        if (total_sum < 0) {
+            total_sum = 0;
+        }
+        $("#id_order_total").attr('value', total_sum);
+    }
+
+    $("#id_add_product").click(function () {
+        current_prod_qty++;
+        $("#id_max_prod_num").attr('value', current_prod_qty);
+        var new_product = `
+            <div id="id_product_row_(product_num)" class="row">
+                <div class="order_product_row" style="float:left;">
+                    <input id="id_shop_link_(product_num)" type="text" name="shop_link_(product_num)" class="order_product_cell" />
+                    <input id="id_product_link_(product_num)" type="text" name="product_link_(product_num)" class="order_product_cell" />
+                    <input id="id_vendor_code_(product_num)" type="text" name="vendor_code_(product_num)" class="order_product_cell" />
+                    <input id="id_name_(product_num)" type="text" name="name_(product_num)" class="order_product_cell" />
+                    <input id="id_color_(product_num)" type="text" name="color_(product_num)" class="order_product_cell" />
+                    <input id="id_size_(product_num)" type="text" name="size_(product_num)" class="order_product_cell" />
+                    <input id="id_quantity_(product_num)" type="text" name="quantity_(product_num)" class="order_product_cell ctrl_calc_sum" />
+                    <input id="id_price_(product_num)" type="text" name="price_(product_num)" class="order_product_cell ctrl_calc_sum" />
+                    <input id="id_discount_code_(product_num)" type="text" name="discount_code_(product_num)" class="order_product_cell" />
+                    <input id="id_discount_in_shop_(product_num)" type="text" name="discount_in_shop_(product_num)" value="0" class="order_product_cell ctrl_calc_sum" />
+                    <input id="id_sum_(product_num)" type="text" name="sum_(product_num)" disabled readonly="1" class="order_product_cell ctrl_product_sum" />
+                    <input id="id_note_(product_num)" type="text" name="note_(product_num)" class="order_product_cell" />
+                    <div id="id_delete_product_(product_num)" class="new_order_delete_product ctrl_delete_product">Удалить</div>
+                </div>
+            </div>
+        `;
+        new_product = new_product.replace(/\(product_num\)/g, current_prod_qty);
+        $("#id_product_list").append(new_product);
+
+        $(".ctrl_calc_sum").on('input', calc_sum);
+        $(".ctrl_delete_product").click(delete_product);
+
+    });
+
+    $("#id_order_from_draft").click(function () {
+        $("#id_hidden_order").click();
+    });
+    $("#id_save_as_draft").click(function () {
+        $("#id_hidden_save_as_draft").click();
+    });
+
 </script>
 {% endblock %}
