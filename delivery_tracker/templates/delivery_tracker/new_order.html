@@ -35,33 +35,6 @@
                 <form id="id_order_form" action="{% url 'new_order' %}" method="post" class="form-horizontal">
                     {% csrf_token %}
 
-                    {{ form.shipping_cost.errors }}
-                    <div class="form-group">
-                        <label for="id_shipping_cost" class="order_new_details_key">Стоимость доставки*</label>
-                        <input id="id_shipping_cost" type="text" name="shipping_cost" value="{{ form.shipping_cost.value }}" class="ctrl_calc_total_sum order_new_details_value" />
-                    </div>
-                    {{ form.coupon.errors }}
-                    <div class="form-group">
-                        <label for="id_coupon" class="order_new_details_key">Код скидки на наши услуги</label>
-                        <input id="id_coupon" type="text" name="coupon" value="" class="order_new_details_value" />
-                    </div>
-                    {{ form.discount.errors }}
-                    <div class="form-group">
-                        <label for="id_discount" class="order_new_details_key">Размер скидки на наши услуги*</label>
-                        <input id="id_discount" type="text" name="discount" value="{{ form.discount.value }}" class="order_new_details_value ctrl_calc_total_sum" />
-                    </div>
-                    {{ form.user_comment.errors }}
-                    <div class="form-group">
-                        <label for="id_user_comment" class="order_new_details_key">Комментарий</label>
-                        <input id="id_user_comment" type="text" name="user_comment" value="{{ form.user_comment.value }}" class="order_new_details_value" />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="id_current_fee" class="order_new_details_key">Текущий тариф</label>
-                        <input id="id_current_fee" type="text" name="current_fee" value="{{ current_fee }}" disabled="1" class="order_new_details_value" />
-                    </div>
-                    <input id="id_max_prod_num" name="max_prod_num" type="hidden" value="1" />
-
                     <div class="row">
                         <div class="order_product_header">
                             <div class="order_product_header_cell">Магазин</div>
@@ -100,6 +73,34 @@
                     <div class="row top-offset-5">
                         <div id="id_add_product" class="order_new_product">+ Добавить</div>
                     </div>
+
+                    {{ form.shipping_cost.errors }}
+                    <div class="form-group top-offset-20">
+                        <label for="id_shipping_cost" class="order_new_details_key">Стоимость доставки*</label>
+                        <input id="id_shipping_cost" type="text" name="shipping_cost" value="{{ form.shipping_cost.value }}" class="ctrl_calc_total_sum order_new_details_value" />
+                    </div>
+                    {{ form.coupon.errors }}
+                    <div class="form-group">
+                        <label for="id_coupon" class="order_new_details_key">Код скидки на наши услуги</label>
+                        <input id="id_coupon" type="text" name="coupon" value="" class="order_new_details_value" />
+                    </div>
+                    {{ form.discount.errors }}
+                    <div class="form-group">
+                        <label for="id_discount" class="order_new_details_key">Размер скидки на наши услуги*</label>
+                        <input id="id_discount" type="text" name="discount" value="{{ form.discount.value }}" class="order_new_details_value ctrl_calc_total_sum" />
+                    </div>
+                    {{ form.user_comment.errors }}
+                    <div class="form-group">
+                        <label for="id_user_comment" class="order_new_details_key">Комментарий</label>
+                        <input id="id_user_comment" type="text" name="user_comment" value="{{ form.user_comment.value }}" class="order_new_details_value" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_current_fee" class="order_new_details_key">Текущий тариф</label>
+                        <input id="id_current_fee" type="text" name="current_fee" value="{{ current_fee }}" disabled="1" class="order_new_details_value" />
+                    </div>
+                    <input id="id_max_prod_num" name="max_prod_num" type="hidden" value="1" />
+
 
                     <div class="form-group top-offset-20">
                         <label for="id_order_total" class="order_new_details_key">Итого сумма Вашего заказа:</label>
@@ -216,12 +217,6 @@
         $(".ctrl_calc_sum").on('input', calc_sum);
         $(".ctrl_delete_product").click(delete_product);
 
-    });
-
-    $("#id_save_draft").click(function () {
-        $("#id_order_form").trigger('submit');
-
-        return false;
     });
 
 </script>

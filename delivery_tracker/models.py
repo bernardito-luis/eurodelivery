@@ -40,7 +40,7 @@ class PurchaseOrderStatus(models.Model):
     # statuses = (
     #   "Черновик", "Отменено", "Запрошено", "Ожидает оплаты",
     #   "Заказ исполнятеся", "Ожидается послупление на склад",
-    #   "Частично получено", "Получено на склад")
+    #   "Частично получено", "Получено на склад", "Удалено")
     # [PurchaseOrderStatus.objects.create(description=s) for s in statuses]
     description = models.CharField(max_length=64)
 
@@ -104,10 +104,18 @@ def order_pre_save(sender, instance, *args, **kwargs):
     if sender == PurchaseOrder:
         if not instance.id:
             # new order
+            return
+
+        new_status = instance.status
+        order = PurchaseOrder.objects.get(id=instance.id)
+        old_status = order.status
+        if old_status != new_status:
             # send mail to admin
             send_mail(
-                'Новый заказ',
-                'Пользователь %s оформил новый заказ' % (
+                'Смена статуса заказа',
+                'Статус заказа №%d изменился с %s на %s '
+                '(пользователь %s)' % (
+                    instance.id, old_status, new_status,
                     instance.user.username
                 ),
                 settings.EMAIL_HOST_USER,
@@ -116,76 +124,30 @@ def order_pre_save(sender, instance, *args, **kwargs):
             )
             # send mail to user
             send_mail(
-                'Новый заказ',
-                'Позравляем! Вы оформили заказ!',
+                'Смена статуса заказа',
+                'Статус заказа №%d изменился с %s на %s' % (
+                    instance.id, old_status, new_status),
                 settings.EMAIL_HOST_USER,
                 [instance.user.username, ],
                 fail_silently=False,
             )
-            return
-
-        new_status = instance.status
-        try:
-            order = PurchaseOrder.objects.get(id=instance.id)
-            old_status = order.status
-            if old_status != new_status:
-                # send mail to admin
-                send_mail(
-                    'Смена статуса заказа',
-                    'Статус заказа №%d изменился с %s на %s '
-                    '(пользователь %s)' % (
-                        instance.id, old_status, new_status,
-                        instance.user.username
-                    ),
-                    settings.EMAIL_HOST_USER,
-                    [User.objects.get(id=1).email, ],
-                    fail_silently=False,
-                )
-                # send mail to user
-                send_mail(
-                    'Смена статуса заказа',
-                    'Статус заказа №%d изменился с %s на %s' % (
-                        instance.id, old_status, new_status),
-                    settings.EMAIL_HOST_USER,
-                    [instance.user.username, ],
-                    fail_silently=False,
-                )
-                StatusLog.objects.create(
-                    purchase_order=order,
-                    status=new_status
-                )
-        except PurchaseOrder.DoesNotExist:
-                # send mail to admin
-                send_mail(
-                    'Сохранен новый заказ',
-                    'Статус заказа №%d %s (пользователь %s)' % (
-                        instance.id, new_status, instance.user.username),
-                    settings.EMAIL_HOST_USER,
-                    [User.objects.get(id=1).email, ],
-                    fail_silently=False,
-                )
-                # send mail to user
-                send_mail(
-                    'Сохранен новый заказ',
-                    'Статус заказа №%d %s' % (
-                        instance.id, new_status),
-                    settings.EMAIL_HOST_USER,
-                    [User.objects.get(id=1).email, ],
-                    fail_silently=False,
-                )
+            StatusLog.objects.create(
+                purchase_order=order,
+                status=new_status
+            )
 
 
 class Product(models.Model):
     purchase_order = models.ForeignKey(PurchaseOrder, blank=True, null=True)
     user = models.ForeignKey('auth.User')
     shop_link = models.CharField(max_length=1024, blank=True, null=True)
-    product_link = models.CharField(max_length=1024)
+    product_link = models.CharField(max_length=1024, blank=True, null=True)
     vendor_code = models.CharField(max_length=64, blank=True, null=True)
     name = models.CharField(max_length=255, blank=True, null=True)
-    color = models.CharField(max_length=32)
-    size = models.CharField(max_length=32)
-    quantity = models.IntegerField()
-    price = models.FloatField()
+    color = models.CharField(max_length=32, blank=True, null=True)
+    size = models.CharField(max_length=32, blank=True, null=True)
+    quantity = models.IntegerField(blank=True, null=True)
+    price = models.FloatField(blank=True, null=True)
     discount_code = models.CharField(max_length=64, blank=True, null=True)
     discount_in_shop = models.FloatField(blank=True, null=True)
     note = models.CharField(max_length=255, blank=True, null=True)

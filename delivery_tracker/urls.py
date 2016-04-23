@@ -16,6 +16,7 @@ urlpatterns = [
         views.user_login, name='login'),
     url(r'^tracker/logout/$',
         views.user_logout, name='logout'),
+
     url(r'^tracker/cabinet/$',
         views.cabinet, name='cabinet'),
     url(r'^tracker/cabinet/personal_data/$',
@@ -27,7 +28,11 @@ urlpatterns = [
         views.my_orders, name='my_orders'),
     url(r'^tracker/order/(?P<order_id>\w+)/details/$',
         views.purchase_order_detail, name='order'),
+    url(r'^tracker/order_from_draft$',
+        views.order_from_draft, name='order_from_draft'),
 
+    url(r'^tracker/order/(?P<order_id>\w+)/cancel$',
+        views.purchase_order_cancel, name='order_cancel'),
     url(r'^tracker/order/(?P<order_id>\w+)/delete$',
         views.purchase_order_delete, name='order_delete'),
     url(r'^tracker/order/(?P<order_id>\w+)/restore$',

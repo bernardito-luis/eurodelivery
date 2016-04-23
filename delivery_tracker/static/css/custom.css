@@ -104,10 +104,9 @@
 }
 .open_order {
     display: inline-flex;
-    background: #BADA55;
     padding: 2px;
     height: 50px;
-    width: 80px;
+    width: 44px;
     border: 2px solid white;
     color: white;
     font-weight: bold;
@@ -128,10 +127,9 @@
 }
 .delete_order {
     display: inline-flex;
-    background: #BADA55;
     padding: 2px;
     height: 50px;
-    width: 80px;
+    width: 44px;
     border: 2px solid white;
     color: white;
     font-weight: bold;
@@ -419,6 +417,25 @@
     //cursor: pointer;
     text-decoration: none;
 
+}
+.draft_control_button {
+    display: inline-flex;
+    background: #A0A09F;
+    height: 50px;
+    border: 1px #7F7F7F solid;
+    width: 109px;
+    justify-content: center;
+    text-align: center;
+    vertical-align: middle;
+    margin-left: 6px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+}
+.draft_control_button:hover{
+    text-decoration: underline;
+    color: white;
 }
 .archive_button:hover{
     text-decoration: none;
